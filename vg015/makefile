@@ -32,11 +32,12 @@ ASMS := $(call rwildcard,.,*.S)
 HEADERS := $(call rwildcard,.,*.h)
 	
 OBJS := $(SRCS:.c=.o)
-OBJS += $(ASMS:.S=.o)
+OBJS_SRC := $(SRCS:.c=.o)
+OBJS_SRC += $(ASMS:.S=.o)
+OBJS := $(addprefix $(BUILD_PATH)/,$(OBJS_SRC))
 	
 INCLUDE_FOLDERS = $(foreach inc, $(sort $(dir $(HEADERS))), -I"$(inc)") -I"./device/Include" -I"./plib/inc" -I"."
-OBJ_DIRS = $(sort $(dir $(OBJS)))
-OBJ_DIRS := $(patsubst ./%,%,$(OBJ_DIRS))
+OBJ_DIRS := $(sort $(dir $(OBJS)))
 	
 LIBS ?= -L$(LINKER_PATH)
 LIBS_ACR ?= -lc_nano -lg_nano -lgcc
@@ -66,9 +67,9 @@ endif
 
 make_build:
 ifeq ($(OS), Windows_NT)
-	@$(foreach dir,$(OBJ_DIRS),if not exist "$(subst /,\,$(BUILD_PATH)/$(dir))" mkdir "$(subst /,\,$(BUILD_PATH)/$(dir))" &)
+	@$(foreach dir,$(OBJ_DIRS),if not exist "$(subst /,\,$(dir))" mkdir "$(subst /,\,$(dir))" &)
 else
-	@$(foreach dir,$(OBJ_DIRS),mkdir -p "$(BUILD_PATH)/$(dir)";)
+	@$(foreach dir,$(OBJ_DIRS),mkdir -p "$(dir)";)
 endif
 	
 help:
@@ -77,19 +78,19 @@ help:
 header:
 	@ echo "NIIET MAKEFILE v.1.0 - VG015"
 	
-%.o: %.S
+$(BUILD_PATH)/%.o: %.S
 	@ echo "ASSEMBLY "$^"" 
-	$(RISCV-GCC) $^ -o $(BUILD_PATH)/$@
+	$(RISCV-GCC) $^ -o $@
 	@ echo "...DONE"
 	
-%.o: %.c
+$(BUILD_PATH)/%.o: %.c
 	@ echo "COMPILE "$^""
-	$(RISCV-GCC) $^ -o $(BUILD_PATH)/$@ 
+	$(RISCV-GCC) $^ -o $@ 
 	@ echo "...DONE"
 	
 %.elf: $(OBJS)
 	@ echo "LINK "$^"" 
-	$(CROSS_PREFIX)gcc -o $@ $(foreach obj, $(OBJS), $(BUILD_PATH)/$(obj)) -static -march=$(MARCH) -mabi=$(MABI) -g -ggdb3 -std=gnu99 $(LD_FLAGS) -L./device/ldscripts -nostartfiles -T ./device/ldscripts/k1921vg015_flash_bl.ld
+	$(CROSS_PREFIX)gcc -o $@ $(OBJS) -static -march=$(MARCH) -mabi=$(MABI) -g -ggdb3 -std=gnu99 $(LD_FLAGS) -L./device/ldscripts -nostartfiles -T ./device/ldscripts/k1921vg015_flash_bl.ld
 	@ echo "...DONE" 
 	
 %.dump: %.elf
@@ -121,8 +122,7 @@ bin:
 	@ echo "...DONE"
 
 
-all: header clean make_build $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).dump hex bin size
-	
+all: header make_build $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).dump hex bin size
 	
 debug: all
 	@ echo "LOAD "$(TARGET_NAME).elf"" 

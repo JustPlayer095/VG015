@@ -45,6 +45,7 @@
             "hide": true,
             "command": "${env:MAKE_EXE}",
             "args": [
+                "-j8",
                 "all",
                 "COMPILER_PATH=${env:COMPILER_PATH}",
                 "PREFIX=riscv64-unknown-elf-",
@@ -77,6 +78,7 @@
             "type": "shell",
             "command": "${env:MAKE_EXE}",
             "args": [
+                "-j8",
                 "all",
                 "COMPILER_PATH=${env:COMPILER_PATH}",
                 "PREFIX=riscv64-unknown-elf-",
