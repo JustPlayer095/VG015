@@ -104,7 +104,7 @@ size: $(BUILD_PATH)/$(TARGET_NAME).elf
 	@ echo "~~SIZE~~"
 	$(RISCV-SIZE) $^
 
-hex:
+hex: $(BUILD_PATH)/$(TARGET_NAME).elf
 	@ echo "HEX"
 	$(RISCV-OBJCOPY) -O ihex $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).hex
 	@ echo "...DONE"
@@ -118,13 +118,21 @@ else
 endif
 	@ echo "...DONE"
 
-bin:
+bin: $(BUILD_PATH)/$(TARGET_NAME).elf
 	@ echo "BIN "
 	$(RISCV-OBJCOPY) -O binary $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).bin
 	@ echo "...DONE"
 
 
-all: header clean make_build $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).dump hex bin size
+all_noclean: header make_build $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).dump hex bin size
+
+rebuild:
+	@$(MAKE) clean
+	@$(MAKE) all_noclean
+
+# Backward-compatible "all", but safe with -j:
+# don't run clean as part of parallel build; use `rebuild` when you need a clean build.
+all: all_noclean
 
 debug: all
 	@ echo "LOAD "$(TARGET_NAME).elf""

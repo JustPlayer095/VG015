@@ -332,8 +332,7 @@ def send_file(port: str, baud: int, addr: int, image_path: Path,
             if delay_ms:
                 time.sleep(delay_ms / 1000.0)
 
-        print("File transfer completed. Перезагрузите устройство, "
-              "чтобы загрузчик скопировал образ из W25Q32 во внутренний Flash.")
+        print("Прошивка прошла успешно")
     finally:
         ser.close()
 
