@@ -23,7 +23,7 @@ MABI				?=
 BUILD_NAME			?= build
 BUILD_PATH  		:= ./$(BUILD_NAME)
 	
-OPTIMISATION ?=
+OPTIMISATION ?= -Os
 
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 	
@@ -32,22 +32,23 @@ ASMS := $(call rwildcard,.,*.S)
 HEADERS := $(call rwildcard,.,*.h)
 	
 OBJS := $(SRCS:.c=.o)
-OBJS += $(ASMS:.S=.o)
+OBJS_SRC := $(SRCS:.c=.o)
+OBJS_SRC += $(ASMS:.S=.o)
+OBJS := $(addprefix $(BUILD_PATH)/,$(OBJS_SRC))
 	
 INCLUDE_FOLDERS = $(foreach inc, $(sort $(dir $(HEADERS))), -I"$(inc)") -I"./device/Include" -I"./plib/inc" -I"."
-OBJ_DIRS = $(sort $(dir $(OBJS)))
-OBJ_DIRS := $(patsubst ./%,%,$(OBJ_DIRS))
+OBJ_DIRS := $(sort $(dir $(OBJS)))
 	
 LIBS ?= -L$(LINKER_PATH)
 LIBS_ACR ?= -lc_nano -lg_nano -lgcc
 	
-LD_FLAGS ?= -static $(LIBS)  $(LIBS_ACR)
+LD_FLAGS ?= -static $(LIBS)  $(LIBS_ACR) -Wl,--gc-sections
 
 # Normalize Windows-style paths for sh-based recipes.
 COMPILER_PATH_NORM := $(subst \,/,$(COMPILER_PATH))
 export CROSS_PREFIX  ?= $(COMPILER_PATH_NORM)/$(PREFIX)
 ifeq ($(OS), Windows_NT)
-export RISCV-GCC	 ?= $(CROSS_PREFIX)gcc.exe -c -Wall $(OPTIMISATION) -march=$(MARCH) -mabi=$(MABI) -g -ggdb3 $(DEFINES) $(INCLUDE_FOLDERS) -static -std=gnu99 $(LIBS) $(LIBS_ACR) $(ADDITIONAL_FLAGS)
+	export RISCV-GCC	 ?= $(CROSS_PREFIX)gcc.exe -c -Wall -ffunction-sections -fdata-sections $(OPTIMISATION) -march=$(MARCH) -mabi=$(MABI) -g -ggdb3 $(DEFINES) $(INCLUDE_FOLDERS) -static -std=gnu99 $(LIBS) $(LIBS_ACR) $(ADDITIONAL_FLAGS)
 export RISCV-AS 	 ?= $(CROSS_PREFIX)as.exe -mno-arch-attr $(OPTIMISATION) -march=$(MARCH) -mabi=$(MABI) $(ADDITIONAL_FLAGS)
 export RISCV-LD 	 ?= $(CROSS_PREFIX)ld.exe 
 export RISCV-OBJDUMP ?= $(CROSS_PREFIX)objdump.exe -S
@@ -55,7 +56,7 @@ export RISCV-OBJCOPY ?= $(CROSS_PREFIX)objcopy.exe
 export RISCV-SIZE 	 ?= $(CROSS_PREFIX)size.exe
 export RISCV-GDB	 ?= $(CROSS_PREFIX)gdb.exe
 else 
-export RISCV-GCC	 ?= $(CROSS_PREFIX)gcc -c -Wall $(OPTIMISATION) -g -ggdb3 -march=$(MARCH) -mabi=$(MABI) $(DEFINES) $(INCLUDE_FOLDERS) -static -std=gnu99 $(LIBS) $(LIBS_ACR) $(ADDITIONAL_FLAGS)
+	export RISCV-GCC	 ?= $(CROSS_PREFIX)gcc -c -Wall -ffunction-sections -fdata-sections $(OPTIMISATION) -g -ggdb3 -march=$(MARCH) -mabi=$(MABI) $(DEFINES) $(INCLUDE_FOLDERS) -static -std=gnu99 $(LIBS) $(LIBS_ACR) $(ADDITIONAL_FLAGS)
 export RISCV-AS 	 ?= $(CROSS_PREFIX)as -mno-arch-attr $(OPTIMISATION) -march=$(MARCH) -mabi=$(MABI) $(ADDITIONAL_FLAGS)
 export RISCV-LD 	 ?= $(CROSS_PREFIX)ld 
 export RISCV-OBJDUMP ?= $(CROSS_PREFIX)objdump -S
@@ -66,9 +67,9 @@ endif
 
 make_build:
 ifeq ($(OS), Windows_NT)
-	@$(foreach dir,$(OBJ_DIRS),if not exist "$(subst /,\,$(BUILD_PATH)/$(dir))" mkdir "$(subst /,\,$(BUILD_PATH)/$(dir))" &)
+	@$(foreach dir,$(OBJ_DIRS),if not exist "$(subst /,\,$(dir))" mkdir "$(subst /,\,$(dir))" &)
 else
-	@$(foreach dir,$(OBJ_DIRS),mkdir -p "$(BUILD_PATH)/$(dir)";)
+	@$(foreach dir,$(OBJ_DIRS),mkdir -p "$(dir)";)
 endif
 	
 help:
@@ -77,19 +78,19 @@ help:
 header:
 	@ echo "NIIET MAKEFILE v.1.0 - VG015"
 	
-%.o: %.S
+$(BUILD_PATH)/%.o: %.S
 	@ echo "ASSEMBLY "$^"" 
-	$(RISCV-GCC) $^ -o $(BUILD_PATH)/$@
+	$(RISCV-GCC) $^ -o $@
 	@ echo "...DONE"
 	
-%.o: %.c
+$(BUILD_PATH)/%.o: %.c
 	@ echo "COMPILE "$^""
-	$(RISCV-GCC) $^ -o $(BUILD_PATH)/$@ 
+	$(RISCV-GCC) $^ -o $@ 
 	@ echo "...DONE"
 	
 %.elf: $(OBJS)
 	@ echo "LINK "$^"" 
-	$(CROSS_PREFIX)g++ -o $@ $(foreach obj, $(OBJS), $(BUILD_PATH)/$(obj)) -static -march=$(MARCH) -mabi=$(MABI) -g -ggdb3 -std=gnu99 $(LD_FLAGS) -L./device/ldscripts -nostartfiles -T ./device/ldscripts/k1921vg015_flash_bl.ld
+	$(CROSS_PREFIX)gcc -o $@ $(OBJS) -static -march=$(MARCH) -mabi=$(MABI) -g -ggdb3 -std=gnu99 $(LD_FLAGS) -L./device/ldscripts -nostartfiles -T ./device/ldscripts/k1921vg015_flash_bl.ld
 	@ echo "...DONE" 
 	
 %.dump: %.elf
@@ -121,8 +122,7 @@ bin:
 	@ echo "...DONE"
 
 
-all: header clean make_build $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).dump hex bin size
-	
+all: header make_build $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).dump hex bin size
 	
 debug: all
 	@ echo "LOAD "$(TARGET_NAME).elf"" 
