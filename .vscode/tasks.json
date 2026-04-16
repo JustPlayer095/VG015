@@ -50,7 +50,7 @@
                 "PREFIX=riscv64-unknown-elf-",
                 "MARCH=rv32imfc_zicsr",
                 "MABI=ilp32f",
-                "OPTIMISATION=-O0"
+                "OPTIMISATION=-Os"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/bootloader",
@@ -82,7 +82,7 @@
                 "PREFIX=riscv64-unknown-elf-",
                 "MARCH=rv32imfc_zicsr",
                 "MABI=ilp32f",
-                "OPTIMISATION=-O0"
+                "OPTIMISATION=-Os"
             ],
             "options": {
                 "cwd": "${workspaceFolder}/${input:appProjectDir}",
@@ -170,7 +170,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "& { if ('${input:appBuildMode}' -eq 'build') { Push-Location '${workspaceFolder}/${input:appProjectDir}'; try { & '${env:MAKE_EXE}' all 'COMPILER_PATH=${env:COMPILER_PATH}' 'PREFIX=riscv64-unknown-elf-' 'MARCH=rv32imfc_zicsr' 'MABI=ilp32f' 'OPTIMISATION=-O0' 'TARGET_NAME=${input:appProjectName}'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } finally { Pop-Location } }; & '${config:workproject.pythonExe}' '${workspaceFolder}/bootloader/boot.py' '--port' '${config:workproject.bootPort}' '--bin' '${workspaceFolder}/${input:appProjectDir}/build/${input:appProjectName}.bin' '--baud' '${config:workproject.bootBaud}' '--timeout' '${config:workproject.bootTimeout}'; exit $LASTEXITCODE }"
+                "& { if ('${input:appBuildMode}' -eq 'build') { Push-Location '${workspaceFolder}/${input:appProjectDir}'; try { & '${env:MAKE_EXE}' all 'COMPILER_PATH=${env:COMPILER_PATH}' 'PREFIX=riscv64-unknown-elf-' 'MARCH=rv32imfc_zicsr' 'MABI=ilp32f' 'OPTIMISATION=-Os' 'TARGET_NAME=${input:appProjectName}'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } finally { Pop-Location } }; & '${config:workproject.pythonExe}' '${workspaceFolder}/bootloader/boot.py' '--port' '${config:workproject.bootPort}' '--bin' '${workspaceFolder}/${input:appProjectDir}/build/${input:appProjectName}.bin' '--baud' '${config:workproject.bootBaud}' '--timeout' '${config:workproject.bootTimeout}'; exit $LASTEXITCODE }"
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
@@ -197,7 +197,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "& { if ('${input:appBuildMode}' -eq 'build') { Push-Location '${workspaceFolder}/${input:appProjectDir}'; try { & '${env:MAKE_EXE}' all 'COMPILER_PATH=${env:COMPILER_PATH}' 'PREFIX=riscv64-unknown-elf-' 'MARCH=rv32imfc_zicsr' 'MABI=ilp32f' 'OPTIMISATION=-O0' 'TARGET_NAME=${input:appProjectName}'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } finally { Pop-Location } }; & '${config:workproject.pythonExe}' '${workspaceFolder}/tools/osdp_filetransfer.py' '--port' '${config:workproject.osdpPort}' '--baud' '${config:workproject.osdpBaud}' '--addr' '${config:workproject.osdpAddr}' '--frag' '${config:workproject.osdpFrag}' '${workspaceFolder}/${input:appProjectDir}/build/${input:appProjectName}.bin'; exit $LASTEXITCODE }"
+                "& { if ('${input:appBuildMode}' -eq 'build') { Push-Location '${workspaceFolder}/${input:appProjectDir}'; try { & '${env:MAKE_EXE}' all 'COMPILER_PATH=${env:COMPILER_PATH}' 'PREFIX=riscv64-unknown-elf-' 'MARCH=rv32imfc_zicsr' 'MABI=ilp32f' 'OPTIMISATION=-Os' 'TARGET_NAME=${input:appProjectName}'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } finally { Pop-Location } }; & '${config:workproject.pythonExe}' '${workspaceFolder}/tools/osdp_filetransfer.py' '--port' '${config:workproject.osdpPort}' '--baud' '${config:workproject.osdpBaud}' '--addr' '${config:workproject.osdpAddr}' '--frag' '${config:workproject.osdpFrag}' '${workspaceFolder}/${input:appProjectDir}/build/${input:appProjectName}.bin'; exit $LASTEXITCODE }"
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
