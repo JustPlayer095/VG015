@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "osdp.h"
-#include "ccitt_crc16.h"
+#include "crc/ccitt_crc16.h"
 #include "core/osdp_parser.h"
 #include "core/osdp_dispatch.h"
 #include "executor/osdp_executor.h"

@@ -1,5 +1,5 @@
 #include "osdp_frame.h"
-#include "../ccitt_crc16.h"
+#include "../crc/ccitt_crc16.h"
 
 uint16_t osdp_frame_build_header(uint8_t *tx, uint8_t addr, uint16_t dlen, uint8_t seq)
 {
