@@ -44,5 +44,7 @@ void ws0010_home(void);
 void ws0010_goto(uint8_t row, uint8_t col); // row: 0/1, col: 0..15
 void ws0010_putc(char c);
 void ws0010_print(const char* s);
+void ws0010_load_cgram(void);  // load custom Cyrillic glyphs (call once after init)
+void ws0010_show_name(void);   // display "КАЦ АРКАДИЙ" / "ИУ4-63Б"
 
 #endif // WS0010_1602_H

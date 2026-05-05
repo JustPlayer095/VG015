@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include "calc.h"
 #include "../../device/include/K1921VG015.h"
-#include "../../device/include/system_k1921vg015.h"
 #include "../../device/include/plic.h"
 #include "../../plib/inc/plib015_gpio.h"
-#include "../../plib/inc/plib015_tmr32.h"
 #include "../gpio/gpio_helpers.h"
 #include "../driver/ws0010/ws0010_1602.h"
 #include "../timebase/timebase.h"
@@ -42,7 +40,6 @@ static const key_id_t g_btn_keys[KEY_COUNT] = {
 };
 
 static void gpio_irq_handler(void);
-static void tmr32_irq_handler(void);
 
 static void calc_gpio_init(void)
 {
@@ -60,12 +57,23 @@ static void oled_show_expr_and_result(const char* expr_str, int has_result, int 
     ws0010_print(expr_str);
   }
 
-  // Вторая строка: только число результата (без префиксов)
+  // Вторая строка: результат (или пасхалка при result == 1990)
   if (has_result) {
-    char buf[17]; // 16 символов + терминатор
-    snprintf(buf, sizeof(buf), "%d", result);
     ws0010_goto(1, 0);
-    ws0010_print(buf);
+    if (result == 1990) {
+      // ЧЕРЕМША: Ч=0x06  Е→E  Р→P  Е→E  М→M  Ш=0x05  А→A
+      static const char cheremsha[] = {
+        '\x06', 'E', 'P', 'E', 'M', '\x05', 'A', '\0'
+      };
+      const char* p = cheremsha;
+      while (*p) {
+        ws0010_putc(*p++);
+      }
+    } else {
+      char buf[17];
+      snprintf(buf, sizeof(buf), "%d", result);
+      ws0010_print(buf);
+    }
   }
 }
 
@@ -80,31 +88,10 @@ static void calc_gpio_irq_init(void)
   PLIC_IntEnable(Plic_Mach_Target, PLIC_GPIO_VECTNUM);
 }
 
-static void calc_tmr32_init(void)
-{
-  RCU->CGCFGAPB_bit.TMR32EN = 1;
-  RCU->RSTDISAPB_bit.TMR32EN = 1;
-
-  TMR32_SetClksel(TMR32_Clksel_SysClk);
-  TMR32_SetDivider(TMR32_Div_8);
-  TMR32_SetMode(TMR32_Mode_Capcom_Up);
-  uint32_t cmp = (SystemCoreClock / 8u) / 1000u;
-  if (cmp == 0) {
-    cmp = 1;
-  }
-  TMR32_CAPCOM_SetComparator(TMR32_CAPCOM_0, cmp);
-  TMR32_SetCounter(0);
-  TMR32_ITCmd(TMR32_IT_CAPCOM_0, ENABLE);
-
-  PLIC_SetPriority(PLIC_TMR32_VECTNUM, 1);
-  PLIC_SetIrqHandler(Plic_Mach_Target, PLIC_TMR32_VECTNUM, tmr32_irq_handler);
-  PLIC_IntEnable(Plic_Mach_Target, PLIC_TMR32_VECTNUM);
-}
-
 void calc_init(void)
 {
   calc_gpio_init();
-  calc_tmr32_init();
+  timebase_init_1ms();
   calc_gpio_irq_init();
 }
 
@@ -132,12 +119,6 @@ static void gpio_irq_handler(void)
       GPIO_ITStatusClear(g_btn_ports[i], g_btn_pins[i]);
     }
   }
-}
-
-static void tmr32_irq_handler(void)
-{
-  ms_ticks++;
-  TMR32_ITClear(TMR32_IT_CAPCOM_0);
 }
 
 static int precedence(char op)

@@ -98,6 +98,90 @@ void ws0010_print(const char* s)
     }
 }
 
+// ---------------------------------------------------------------------------
+// CGRAM — custom 5x8 glyphs for Russian letters absent from this ROM
+// ---------------------------------------------------------------------------
+//
+// This ROM (Arabic + Katakana variant) has no Cyrillic block.
+// Letters visually identical to Latin are mapped to existing ROM codes:
+//   К→K  А→A  Р→P  У→Y  (and all ASCII digits, space, dash)
+//
+// The remaining unique letters are stored in CGRAM slots 0..4:
+//   Slot 0 → Б   Slot 1 → Д   Slot 2 → И   Slot 3 → Й   Slot 4 → Ц
+//
+// Each glyph is 8 bytes, one per pixel row (bits 4..0 = columns left→right).
+//
+#define CGRAM_B   0x00u   // Б
+#define CGRAM_D   0x01u   // Д
+#define CGRAM_I   0x02u   // И
+#define CGRAM_IK  0x03u   // Й
+#define CGRAM_TS  0x04u   // Ц
+#define CGRAM_SH  0x05u   // Ш
+#define CGRAM_CH  0x06u   // Ч
+
+static const uint8_t cgram_glyphs[7][8] = {
+    /* Б  XXXXX / X.... / XXXX. / X...X / X...X / X...X / XXXX. / ..... */
+    { 0x1F, 0x10, 0x1E, 0x11, 0x11, 0x11, 0x1E, 0x00 },
+
+    /* Д  .X.X. / .X.X. / .X.X. / .X.X. / .X.X. / XXXXX / X...X / ..... */
+    { 0b01110, 0x0A, 0x0A, 0x0A, 0x0A, 0x1F, 0x11, 0x00 },
+
+    /* И  X...X / X...X / X..XX / X.X.X / XX..X / X...X / X...X / ..... */
+    { 0x11, 0x11, 0x13, 0x15, 0x19, 0x11, 0x11, 0x00 },
+
+    /* Й  .X.X. / X...X / X...X / X..XX / X.X.X / XX..X / X...X / ..... */
+    { 0x0A, 0x15, 0x11, 0x13, 0x15, 0x19, 0x11, 0x00 },
+
+    /* Ц  X...X / X...X / X...X / X...X / X...X / XXXXX / ....X / ..... */
+    { 0x12, 0x12, 0x12, 0x12, 0x12, 0x1E, 0x03, 0x00 },
+
+    /* Ш  X.X.X / X.X.X / X.X.X / X.X.X / X.X.X / XXXXX / ..... / ..... */
+    { 0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 0x1F, 0x00 },
+
+    /* Ч  X...X / X...X / X...X / .XXXX / ....X / ....X / ....X / ..... */
+    { 0x11, 0x11, 0x11, 0x0F, 0x01, 0x01, 0x01, 0x00 },
+};
+
+// Load all custom glyphs into CGRAM.
+// Must be called after ws0010_init() and before any text output.
+void ws0010_load_cgram(void)
+{
+    for (uint8_t slot = 0u; slot < 7u; ++slot) {
+        cmd((uint8_t)(0x40u | (uint8_t)(slot << 3)));   // set CGRAM address
+        usleep(50);
+        for (uint8_t row = 0u; row < 8u; ++row) {
+            data(cgram_glyphs[slot][row]);
+            usleep(50);
+        }
+    }
+    ws0010_goto(0, 0);   // switch back to DDRAM
+}
+
+// Display "КАЦ АРКАДИЙ" on row 0 and "ИУ4-63Б" on row 1.
+void ws0010_show_name(void)
+{
+    // Row 0: К  А  Ц     А  Р  К  А  Д  И  Й
+    static const uint8_t row0[] = {
+        'K', 'A', CGRAM_TS, ' ', 'A', 'P', 'K', 'A', CGRAM_D, CGRAM_I, CGRAM_IK
+    };
+    // Row 1: И  У  4  -  6  3  Б
+    static const uint8_t row1[] = {
+        CGRAM_I, 'Y', '4', '-', '6', '3', CGRAM_B
+    };
+
+    ws0010_goto(0, 0);
+    for (uint8_t i = 0u; i < (uint8_t)sizeof(row0); ++i) {
+        data(row0[i]);
+        usleep(50);
+    }
+
+    ws0010_goto(1, 0);
+    for (uint8_t i = 0u; i < (uint8_t)sizeof(row1); ++i) {
+        data(row1[i]);
+        usleep(50);
+    }
+}
+
 static void gpio_init_ws0010(void)
 {
     // Enable GPIO port clock/reset for selected port.
