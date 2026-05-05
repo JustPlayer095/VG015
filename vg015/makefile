@@ -7,7 +7,7 @@ TARGET_NAME ?= vg015
 	
 COMPILER_PATH ?=
 ADDITIONAL_FLAGS ?=
-DEFINES ?= -DRETARGET -DHSECLK_VAL=16000000 -DSYSCLK_PLL -DCKO_PLL0
+DEFINES ?= -DRETARGET -DSYSCLK_HSI
 PREFIX ?= 
 
 # Ensure Windows recipes run under cmd.exe even if make provides sh.exe

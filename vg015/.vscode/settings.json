@@ -1,9 +1,7 @@
 {
     "C_Cpp.default.compilerPath": "C:\\Users\\kac\\.niiet_aspect\\riscv_gcc_windows\\bin\\riscv64-unknown-elf-gcc.exe",
     "C_Cpp.default.defines": [
-        "HSECLK_VAL=16000000",
-        "SYSCLK_PLL",
-        "CKO_PLL0",
+        "SYSCLK_HSI",
         "RETARGET"
     ],
     "C_Cpp.default.includePath": [
