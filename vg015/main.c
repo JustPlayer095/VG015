@@ -7,6 +7,7 @@
 #include "plib/inc/plib015_tmr32.h"
 #include "modules/osdp/osdp.h"
 #include "modules/timebase/timebase.h"
+#include "modules/wiegand/wiegand.h"
 #include "modules/config/config.h"
 #include <stdio.h>
 #include <inttypes.h>
@@ -63,7 +64,13 @@ static void tmr32_irq_handler(void)
 {
     ms_ticks++;
     osdp_tick_1ms();
+    wiegand_tick_1ms();
     TMR32_ITClear(TMR32_IT_CAPCOM_0);
+}
+
+static void gpio_irq_handler(void)
+{
+    wiegand_gpio_irq_handler();
 }
 
 static void tmr32_init_1ms(void)
@@ -107,6 +114,10 @@ static void irq_init(void)
     PLIC_SetPriority(PLIC_TMR32_VECTNUM, 1);
     PLIC_SetIrqHandler(Plic_Mach_Target, PLIC_TMR32_VECTNUM, tmr32_irq_handler);
     PLIC_IntEnable(Plic_Mach_Target, PLIC_TMR32_VECTNUM);
+
+    PLIC_SetPriority(PLIC_GPIO_VECTNUM, 1);
+    PLIC_SetIrqHandler(Plic_Mach_Target, PLIC_GPIO_VECTNUM, gpio_irq_handler);
+    PLIC_IntEnable(Plic_Mach_Target, PLIC_GPIO_VECTNUM);
 }
 
 //-- Peripheral init functions -------------------------------------------------
@@ -118,8 +129,9 @@ void periph_init()
     retarget_init();
     tmr32_init_1ms();
     irq_init();
-    InterruptEnable();
     osdp_init();
+    wiegand_init();
+    InterruptEnable();
     printf("OSDP initialized\n\r");
     // ws0010_init();
     // ws0010_goto(0, 0);

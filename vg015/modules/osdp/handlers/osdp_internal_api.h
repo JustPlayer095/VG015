@@ -15,6 +15,7 @@ void osdp_build_and_send_pdcap(uint8_t seq);
 void osdp_build_and_send_istat(uint8_t seq);
 void osdp_build_and_send_ostat(uint8_t seq);
 void osdp_build_and_send_com(uint8_t seq, uint8_t new_addr, uint32_t new_baud);
+int osdp_try_send_queued_event(uint8_t seq);
 
 void osdp_apply_comset(uint8_t new_addr, uint32_t new_baud);
 void osdp_apply_factory_reset(void);

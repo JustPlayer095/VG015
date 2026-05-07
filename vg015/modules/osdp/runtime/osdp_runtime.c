@@ -2,18 +2,19 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "osdp.h"
+#include "../osdp.h"
 #include "osdp_runtime.h"
-#include "core/osdp_frame.h"
-#include "handlers/osdp_internal_api.h"
-#include "policy/osdp_policy.h"
-#include "port/osdp_port.h"
-#include "state/osdp_context.h"
+#include "../core/osdp_frame.h"
+#include "../handlers/osdp_internal_api.h"
+#include "../policy/osdp_policy.h"
+#include "../port/osdp_port.h"
+#include "../state/osdp_context.h"
 
-#include "../../device/Include/K1921VG015.h"
-#include "../config/config.h"
-#include "../driver/w25q32/extflash_w25q32.h"
-#include "../update/update_flag.h"
+#include "../../../device/include/K1921VG015.h"
+#include "../../../device/include/system_k1921vg015.h"
+#include "../../config/config.h"
+#include "../../driver/w25q32/extflash_w25q32.h"
+#include "../../update/update_flag.h"
 
 #define APP_FLASH_WAIT_ERASE_LOOPS ((uint32_t)2000000u)
 #define APP_FLASH_WAIT_WRITE_LOOPS ((uint32_t)200000u)
@@ -47,6 +48,28 @@ static void osdp_build_crc_and_send(uint8_t *tx, uint16_t dlen)
 {
     dlen = osdp_frame_append_crc(tx, dlen);
     osdp_port_send_blocking(tx, dlen);
+}
+
+static void osdp_build_and_send_raw(uint8_t seq, const osdp_card_event_t *event)
+{
+    uint8_t tx[32];
+    uint16_t i;
+    uint8_t n;
+
+    if (!event || event->data_len > sizeof(event->data)) {
+        osdp_build_and_send_ack(seq);
+        return;
+    }
+
+    i = osdp_build_header(tx, (uint16_t)(OSDP_HEADER_LEN + 3u + event->data_len), seq);
+    tx[i++] = osdp_RAW;
+    tx[i++] = event->reader_no;
+    tx[i++] = event->bit_count;
+    tx[i++] = event->data_len;
+    for (n = 0u; n < event->data_len; ++n) {
+        tx[i++] = event->data[n];
+    }
+    osdp_build_crc_and_send(tx, i);
 }
 
 static void set_led_state(uint8_t on)
@@ -211,6 +234,58 @@ void osdp_apply_factory_reset(void)
 uint32_t osdp_get_baud(void)
 {
     return g_runtime_ctx.baud;
+}
+
+void osdp_enqueue_raw_card(uint8_t reader_no, uint8_t bit_count, const uint8_t *data, uint8_t data_len)
+{
+    osdp_card_event_t *slot;
+    uint8_t i;
+
+    if (!data || data_len == 0u || data_len > 8u) {
+        return;
+    }
+
+    InterruptDisable();
+    if (g_runtime_ctx.card_event_count >= OSDP_CARD_EVENT_QUEUE_CAPACITY) {
+        g_runtime_ctx.card_event_head = (uint8_t)((g_runtime_ctx.card_event_head + 1u) % OSDP_CARD_EVENT_QUEUE_CAPACITY);
+        g_runtime_ctx.card_event_count--;
+    }
+
+    slot = &g_runtime_ctx.card_event_queue[g_runtime_ctx.card_event_tail];
+    slot->reader_no = reader_no;
+    slot->bit_count = bit_count;
+    slot->data_len = data_len;
+    for (i = 0u; i < data_len; ++i) {
+        slot->data[i] = data[i];
+    }
+
+    g_runtime_ctx.card_event_tail = (uint8_t)((g_runtime_ctx.card_event_tail + 1u) % OSDP_CARD_EVENT_QUEUE_CAPACITY);
+    g_runtime_ctx.card_event_count++;
+    InterruptEnable();
+}
+
+int osdp_try_send_queued_event(uint8_t seq)
+{
+    osdp_card_event_t event;
+    uint8_t i;
+
+    InterruptDisable();
+    if (g_runtime_ctx.card_event_count == 0u) {
+        InterruptEnable();
+        return 0;
+    }
+
+    event = g_runtime_ctx.card_event_queue[g_runtime_ctx.card_event_head];
+    g_runtime_ctx.card_event_head = (uint8_t)((g_runtime_ctx.card_event_head + 1u) % OSDP_CARD_EVENT_QUEUE_CAPACITY);
+    g_runtime_ctx.card_event_count--;
+    InterruptEnable();
+
+    for (i = event.data_len; i < sizeof(event.data); ++i) {
+        event.data[i] = 0u;
+    }
+
+    osdp_build_and_send_raw(seq, &event);
+    return 1;
 }
 
 uint8_t osdp_runtime_addr(void)
@@ -734,4 +809,8 @@ void osdp_runtime_init(void)
         g_runtime_ctx.output_ctrl[i].timer_ms_left = 0u;
         g_runtime_ctx.output_ctrl[i].allow_completion = 0u;
     }
+
+    g_runtime_ctx.card_event_head = 0u;
+    g_runtime_ctx.card_event_tail = 0u;
+    g_runtime_ctx.card_event_count = 0u;
 }

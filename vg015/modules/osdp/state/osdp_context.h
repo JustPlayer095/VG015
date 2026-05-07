@@ -43,6 +43,15 @@ typedef struct {
 } osdp_led_ctrl_t;
 
 typedef struct {
+    uint8_t reader_no;
+    uint8_t bit_count;
+    uint8_t data_len;
+    uint8_t data[8];
+} osdp_card_event_t;
+
+#define OSDP_CARD_EVENT_QUEUE_CAPACITY 8u
+
+typedef struct {
     osdp_rx_state_t rx_state;
     uint16_t rx_expected_len;
     uint16_t rx_pos;
@@ -52,6 +61,10 @@ typedef struct {
     osdp_file_tx_state_t file_tx;
     osdp_output_ctrl_t output_ctrl[4];
     osdp_led_ctrl_t led_ctrl;
+    osdp_card_event_t card_event_queue[OSDP_CARD_EVENT_QUEUE_CAPACITY];
+    uint8_t card_event_head;
+    uint8_t card_event_tail;
+    uint8_t card_event_count;
 } osdp_context_t;
 
 #endif

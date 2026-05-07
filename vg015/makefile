@@ -80,11 +80,21 @@ header:
 	
 $(BUILD_PATH)/%.o: %.S
 	@ echo "ASSEMBLY "$^"" 
+ifeq ($(OS), Windows_NT)
+	@if not exist "$(subst /,\,$(dir $@))" mkdir "$(subst /,\,$(dir $@))"
+else
+	@mkdir -p "$(dir $@)"
+endif
 	$(RISCV-GCC) $^ -o $@
 	@ echo "...DONE"
 	
 $(BUILD_PATH)/%.o: %.c
 	@ echo "COMPILE "$^""
+ifeq ($(OS), Windows_NT)
+	@if not exist "$(subst /,\,$(dir $@))" mkdir "$(subst /,\,$(dir $@))"
+else
+	@mkdir -p "$(dir $@)"
+endif
 	$(RISCV-GCC) $^ -o $@ 
 	@ echo "...DONE"
 	

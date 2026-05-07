@@ -12,7 +12,9 @@ osdp_intent_t osdp_handle_cmd_basic(uint8_t cmd, uint8_t seq, const uint8_t *dat
     }
     switch (cmd) {
     case osdp_POLL:
-        osdp_build_and_send_ack(seq);
+        if (!osdp_try_send_queued_event(seq)) {
+            osdp_build_and_send_ack(seq);
+        }
         break;
     case osdp_ID:
         osdp_build_and_send_pdid(seq);
