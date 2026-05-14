@@ -36,7 +36,6 @@
   ],
   "C_Cpp.default.includePath": [
     "${workspaceFolder}/vg015/bsp",
-    "${workspaceFolder}/vg015/modules/calc",
     "${workspaceFolder}/vg015/modules/driver",
     "${workspaceFolder}/vg015/modules/gpio",
     "${workspaceFolder}/vg015/device/include",

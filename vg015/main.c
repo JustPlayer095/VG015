@@ -10,8 +10,6 @@
 #include "modules/wiegand/wiegand.h"
 #include <stdio.h>
 #include <inttypes.h>
-// #include "modules/calc/calc.h"
-// #include "modules/driver/ws0010_1602.h"
 
 //-- Defines -------------------------------------------------------------------
 #define UART4_BAUD  115200
@@ -132,13 +130,6 @@ void periph_init()
     wiegand_init();
     InterruptEnable();
     printf("OSDP initialized\n\r");
-    // ws0010_init();
-    // ws0010_goto(0, 0);
-    // ws0010_print("HELLO WS0010");
-    // ws0010_goto(1, 0);
-    // ws0010_print("6800 4-bit");
-    // calc_init();
-
 }
 
 //-- Main ----------------------------------------------------------------------

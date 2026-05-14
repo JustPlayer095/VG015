@@ -10,7 +10,6 @@
   ],
   "C_Cpp.default.includePath": [
     "${workspaceFolder}/bsp",
-    "${workspaceFolder}/modules/calc",
     "${workspaceFolder}/modules/driver",
     "${workspaceFolder}/modules/gpio",
     "${workspaceFolder}/device/include",
