@@ -1,28 +1,45 @@
 {
-    "files.associations": {
-        "plib015.h": "c"
-    },
-    "C_Cpp.errorSquiggles": "disabled",
-    "workproject.makeExe": "C:/Users/kac/.niiet_aspect/riscv_kit_windows/bin/make.exe",
-    "workproject.compilerPath": "C:/Users/kac/.niiet_aspect/riscv_gcc_windows/bin",
-    "workproject.prefix": "riscv64-unknown-elf-",
-    "workproject.march": "rv32imfc_zicsr",
-    "workproject.mabi": "ilp32f",
-    "workproject.optimisation": "-O0",
-    "workproject.openocdExe": "C:/Users/kac/.niiet_aspect/riscv_kit_windows/bin/openocd.exe",
-    "workproject.openocdScriptsRoot": "C:/Users/kac/.niiet_aspect/riscv_kit_windows",
-    "workproject.openocdInterfaceCfg": "./interface/onboard_ftdi.cfg",
-    "workproject.openocdTargetCfg": "./target/k1921vg015.cfg",
-    "workproject.openocdInitCmd": "init;halt",
-    "workproject.gdbExe": "C:/Users/kac/.niiet_aspect/riscv_gcc_windows/bin/riscv64-unknown-elf-gdb.exe",
-    "workproject.objcopyExe": "C:/Users/kac/.niiet_aspect/riscv_gcc_windows/bin/riscv64-unknown-elf-objcopy.exe",
-    "workproject.pythonExe": "python",
-    "workproject.bootPort": "auto",
-    "workproject.bootBaud": "115200",
-    "workproject.bootTimeout": "30",
-    "workproject.osdpPort": "auto",
-    "workproject.osdpPortFilter": "CH340|CP210|FTDI|USB",
-    "workproject.osdpBaud": "115200",
-    "workproject.osdpAddr": "1",
-    "workproject.osdpFrag": "200"
+  // Пути к тулчейну: задайте переменные пользователя (User), например через задачу
+  // "setup-toolchain-paths" → tools/setup_toolchain_env.ps1, затем перезапустите.
+  "files.associations": {
+    "plib015.h": "c"
+  },
+  "C_Cpp.errorSquiggles": "disabled",
+  "workproject.makeExe": "${env:MAKE_EXE}",
+  "workproject.compilerPath": "${env:COMPILER_PATH}",
+  "workproject.prefix": "riscv64-unknown-elf-",
+  "workproject.march": "rv32imfc_zicsr",
+  "workproject.mabi": "ilp32f",
+  "workproject.optimisation": "-O0",
+  "workproject.openocdExe": "${env:OPENOCD_EXE}",
+  "workproject.openocdScriptsRoot": "${env:OPENOCD_SCRIPTS_ROOT}",
+  "workproject.openocdInterfaceCfg": "./interface/onboard_ftdi.cfg",
+  "workproject.openocdTargetCfg": "./target/k1921vg015.cfg",
+  "workproject.openocdInitCmd": "init;halt",
+  "workproject.gdbExe": "${env:GDB_EXE}",
+  "workproject.objcopyExe": "${env:OBJCOPY_EXE}",
+  "workproject.pythonExe": "python",
+  "workproject.bootPort": "auto",
+  "workproject.bootBaud": "115200",
+  "workproject.bootTimeout": "30",
+  "workproject.osdpPort": "auto",
+  "workproject.osdpPortFilter": "CH340|CP210|FTDI|USB",
+  "workproject.osdpBaud": "115200",
+  "workproject.osdpAddr": "1",
+  "workproject.osdpFrag": "200",
+  "C_Cpp.default.compilerPath": "${env:COMPILER_PATH}/riscv64-unknown-elf-gcc.exe",
+  "C_Cpp.default.defines": [
+    "HSECLK_VAL=16000000",
+    "SYSCLK_PLL",
+    "CKO_PLL0",
+    "RETARGET"
+  ],
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/vg015/bsp",
+    "${workspaceFolder}/vg015/modules/calc",
+    "${workspaceFolder}/vg015/modules/driver",
+    "${workspaceFolder}/vg015/modules/gpio",
+    "${workspaceFolder}/vg015/device/include",
+    "${workspaceFolder}/vg015/plib/inc"
+  ]
 }

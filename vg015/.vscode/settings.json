@@ -1,22 +1,24 @@
 {
-    "C_Cpp.default.compilerPath": "C:\\Users\\kac\\.niiet_aspect\\riscv_gcc_windows\\bin\\riscv64-unknown-elf-gcc.exe",
-    "C_Cpp.default.defines": [
-        "HSECLK_VAL=16000000",
-        "SYSCLK_PLL",
-        "CKO_PLL0",
-        "RETARGET"
-    ],
-    "C_Cpp.default.includePath": [
-        "c:\\_WORKSPACE\\WORKPROJECT\\vg015\\bsp",
-        "c:\\_WORKSPACE\\WORKPROJECT\\vg015\\modules\\calc",
-        "c:\\_WORKSPACE\\WORKPROJECT\\vg015\\modules\\driver",
-        "c:\\_WORKSPACE\\WORKPROJECT\\vg015\\modules\\gpio",
-        "c:\\_WORKSPACE\\WORKPROJECT\\vg015\\device\\include",
-        "c:\\_WORKSPACE\\WORKPROJECT\\vg015\\plib\\inc"
-    ],
-    "files.associations": {
-        "stdint.h": "c",
-        "k1921vg015.h": "c"
-    },
-    "C_Cpp.errorSquiggles": "disabled"
+  // Открывайте папку vg015 как корень workspace — пути ниже относительно неё.
+  // Компилятор: переменная COMPILER_PATH (см. tools/setup_toolchain_env.ps1 в корне репозитория).
+  "C_Cpp.default.compilerPath": "${env:COMPILER_PATH}/riscv64-unknown-elf-gcc.exe",
+  "C_Cpp.default.defines": [
+    "HSECLK_VAL=16000000",
+    "SYSCLK_PLL",
+    "CKO_PLL0",
+    "RETARGET"
+  ],
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/bsp",
+    "${workspaceFolder}/modules/calc",
+    "${workspaceFolder}/modules/driver",
+    "${workspaceFolder}/modules/gpio",
+    "${workspaceFolder}/device/include",
+    "${workspaceFolder}/plib/inc"
+  ],
+  "files.associations": {
+    "stdint.h": "c",
+    "k1921vg015.h": "c"
+  },
+  "C_Cpp.errorSquiggles": "disabled"
 }
