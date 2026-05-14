@@ -793,6 +793,8 @@ void osdp_runtime_init(void)
     uint8_t i;
 
     osdp_load_addr_baud();
+    /* main.c leaves UART4 at a fixed rate; align hardware with stored OSDP baud. */
+    osdp_port_set_uart_baud(g_runtime_ctx.baud);
     osdp_port_extflash_init();
     update_flag_led_init();
     update_flag_led_set(osdp_port_update_flag_is_pending());
