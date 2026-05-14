@@ -21,8 +21,8 @@ osdp_intent_t osdp_handle_cmd_admin(uint8_t cmd, uint8_t seq, const uint8_t *dat
                 if (should_reply) osdp_build_and_send_nak(seq, 0x04u);
                 return intent;
             }
-            osdp_apply_comset(new_addr, new_baud);
             if (should_reply) osdp_build_and_send_com(seq, new_addr, new_baud);
+            osdp_apply_comset(new_addr, new_baud);
             intent.flags = OSDP_INTENT_SET_BAUD | OSDP_INTENT_RESET;
             intent.baud = osdp_get_baud();
             return intent;

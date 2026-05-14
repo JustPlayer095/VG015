@@ -1,17 +1,9 @@
-# ------------------------------
-# OS / IDE
-# ------------------------------
-.DS_Store
-Thumbs.db
-.idea/
-
 # VS Code: keep shared project configs only
 .vscode/*
 !.vscode/tasks.json
 !.vscode/settings.json
 !.vscode/launch.json
 !.vscode/extensions.json
-.claude
 vg015/.vscode/*
 !vg015/.vscode/tasks.json
 !vg015/.vscode/settings.json

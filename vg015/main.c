@@ -8,7 +8,6 @@
 #include "modules/osdp/osdp.h"
 #include "modules/timebase/timebase.h"
 #include "modules/wiegand/wiegand.h"
-#include "modules/config/config.h"
 #include <stdio.h>
 #include <inttypes.h>
 // #include "modules/calc/calc.h"
@@ -128,8 +127,8 @@ void periph_init()
     UART4_init();
     retarget_init();
     tmr32_init_1ms();
-    irq_init();
     osdp_init();
+    irq_init();
     wiegand_init();
     InterruptEnable();
     printf("OSDP initialized\n\r");
@@ -146,12 +145,6 @@ void periph_init()
 int main(void)
 {
   periph_init();
-  uint32_t seq = config_storage_get_seq();
-  printf("Seq: %u\n\r", seq);
-  uint8_t addr = config_storage_get_osdp_addr();
-  uint32_t baud = config_storage_get_osdp_baud();
-  printf("Addr: %u\n\r", addr);
-  printf("Baud: %u\n\r", baud);
   while (1) {
       __asm volatile("wfi");
   }
