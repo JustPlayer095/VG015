@@ -1,6 +1,21 @@
 #include "config.h"
 
 #include <string.h>
+#include <stddef.h>
+
+static uint32_t config_crc32(const uint8_t *data, size_t len)
+{
+    uint32_t crc = 0xFFFFFFFFu;
+    size_t i;
+    int bit;
+    for (i = 0u; i < len; ++i) {
+        crc ^= (uint32_t)data[i];
+        for (bit = 0; bit < 8; ++bit) {
+            crc = (crc >> 1u) ^ (0xEDB88320u & (uint32_t)(-(int32_t)(crc & 1u)));
+        }
+    }
+    return crc ^ 0xFFFFFFFFu;
+}
 
 #if (CONFIG_STORAGE == CONFIG_STORAGE_EEPROM)
 #include "../driver/eeprom/eeprom.h"
@@ -98,6 +113,15 @@ static bool config_read_record(config_flash_record_t *rec)
         return false;
     }
 
+    // CRC == 0 означает запись без защиты (legacy или частичная запись) — отклоняем.
+    if (rec->crc32 == 0u || rec->crc32 == 0xFFFFFFFFu) {
+        return false;
+    }
+
+    if (config_crc32((const uint8_t *)&rec->cfg, sizeof(rec->cfg)) != rec->crc32) {
+        return false;
+    }
+
     return true;
 }
 
@@ -149,6 +173,7 @@ void config_storage_save(const config_storage_t *cfg_in)  //загружаем �
     } else {
         new_rec.seq = 1u;
     }
+    new_rec.crc32 = config_crc32((const uint8_t *)&new_rec.cfg, sizeof(new_rec.cfg));
 
 #if (CONFIG_STORAGE == CONFIG_STORAGE_EEPROM)
     eeprom_write_bytes(CONFIG_EEPROM_BASE, (const uint8_t *)&new_rec, sizeof(new_rec));
@@ -208,6 +233,7 @@ void config_storage_reset(void){
     config_flash_record_t rec;
     config_storage_default(&rec.cfg);
     rec.seq = 1u;
+    rec.crc32 = config_crc32((const uint8_t *)&rec.cfg, sizeof(rec.cfg));
 
 #if (CONFIG_STORAGE == CONFIG_STORAGE_EEPROM)
     eeprom_write_bytes(CONFIG_EEPROM_BASE, (const uint8_t *)&rec, sizeof(rec));
