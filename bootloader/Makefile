@@ -92,7 +92,7 @@ endif
 
 $(BUILD_PATH)/$(TARGET_NAME).elf: $(OBJS)
 	@ echo "LINK "$^""
-	$(CROSS_PREFIX)g++ -o $@ $(foreach obj,$(OBJS),$(BUILD_PATH)/$(obj)) -static -march=$(MARCH) -mabi=$(MABI) -g -ggdb3 -std=gnu99 $(LD_FLAGS) -nostartfiles -T ./device/ldscripts/k1921vg015_boot.ld
+	$(CROSS_PREFIX)gcc -o $@ $(foreach obj,$(OBJS),$(BUILD_PATH)/$(obj)) -static -march=$(MARCH) -mabi=$(MABI) -g -ggdb3 -std=gnu99 $(LD_FLAGS) -nostartfiles -T ./device/ldscripts/k1921vg015_boot.ld
 	@ echo "...DONE"
 
 $(BUILD_PATH)/$(TARGET_NAME).dump: $(BUILD_PATH)/$(TARGET_NAME).elf
