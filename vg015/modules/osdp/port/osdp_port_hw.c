@@ -5,6 +5,7 @@
 #include "../../../plib/inc/plib015_gpio.h"
 #include "../../driver/w25q32/extflash_w25q32.h"
 #include "../../update/update_flag.h"
+#include "../../timebase/timebase.h"
 
 #define UPDATE_FLAG_LED_MASK ((uint32_t)1u << 15)
 
@@ -37,8 +38,8 @@ void osdp_port_set_uart_baud(uint32_t baud)
 
 void osdp_port_delay_ms(uint32_t delay_ms)
 {
-    volatile uint32_t d = delay_ms * 1000u;
-    while (d--) { }
+    uint32_t start = ms_ticks;
+    while ((ms_ticks - start) < delay_ms) { }
 }
 
 void osdp_port_do_reset(void)
