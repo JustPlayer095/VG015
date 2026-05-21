@@ -718,7 +718,6 @@ void osdp_handle_filetransfer(uint8_t seq, const uint8_t *data, uint16_t data_le
                 }
                 osdp_build_and_send_ftstat(seq, (int16_t)1);
                 g_runtime_ctx.file_tx.active = 0u;
-                osdp_port_delay_ms(50u);
                 osdp_port_do_reset();
                 return;
             }
