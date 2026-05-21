@@ -58,3 +58,4 @@ WORKPROJECT_AI_PLAYBOOK.md
 AGENTS.md
 tools/tests
 skills-lock.json
+.codegraph/
