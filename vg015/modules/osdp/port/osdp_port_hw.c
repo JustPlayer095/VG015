@@ -17,6 +17,7 @@ void osdp_port_send_blocking(const uint8_t *data, uint16_t len)
         RETARGET_UART->DR_bit.DATA = data[i];
     }
     while (!RETARGET_UART->FR_bit.TXFE) { }
+    while (RETARGET_UART->FR_bit.BUSY) { }
 }
 
 void osdp_port_set_uart_baud(uint32_t baud)
