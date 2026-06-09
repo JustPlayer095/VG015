@@ -121,12 +121,12 @@ else
 endif
 	@ echo "...DONE"
 	
-hex:
+hex: $(BUILD_PATH)/$(TARGET_NAME).elf
 	@ echo "HEX "
 	$(RISCV-OBJCOPY) -O ihex $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).hex
 	@ echo "...DONE"
 	
-bin:
+bin: $(BUILD_PATH)/$(TARGET_NAME).elf
 	@ echo "BIN "
 	$(RISCV-OBJCOPY) -O binary $(BUILD_PATH)/$(TARGET_NAME).elf $(BUILD_PATH)/$(TARGET_NAME).bin
 	@ echo "...DONE"

@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+/* --- Parser state (RX byte-stream state machine only) --- */
+
 typedef enum {
     osdp_rx_wait_som = 0,
     osdp_rx_wait_addr,
@@ -10,6 +12,15 @@ typedef enum {
     osdp_rx_wait_len_m,
     osdp_rx_receive_bytes
 } osdp_rx_state_t;
+
+typedef struct {
+    osdp_rx_state_t rx_state;
+    uint16_t rx_expected_len;
+    uint16_t rx_pos;
+    uint8_t rx_buf[256];
+} osdp_parser_ctx_t;
+
+/* --- Runtime state (protocol logic, outputs, LED, card queue) --- */
 
 typedef struct {
     uint8_t active;
@@ -52,10 +63,6 @@ typedef struct {
 #define OSDP_CARD_EVENT_QUEUE_CAPACITY 8u
 
 typedef struct {
-    osdp_rx_state_t rx_state;
-    uint16_t rx_expected_len;
-    uint16_t rx_pos;
-    uint8_t rx_buf[256];
     uint8_t addr;
     uint32_t baud;
     osdp_file_tx_state_t file_tx;

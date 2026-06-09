@@ -4,19 +4,29 @@
         {
             "label": "start-openocd",
             "type": "shell",
-            "hide": true,
-            "command": "${config:workproject.openocdExe}",
+            "command": "powershell",
             "args": [
-                "-s", "${config:workproject.openocdScriptsRoot}",
-                "-s", "${config:workproject.openocdScriptsRoot}/interface",
-                "-s", "${config:workproject.openocdScriptsRoot}/target",
-                "-f", "${config:workproject.openocdInterfaceCfg}",
-                "-f", "${config:workproject.openocdTargetCfg}",
-                "-c", "${config:workproject.openocdInitCmd}",
-                "-d1"
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/tools/run_openocd.ps1",
+                "-WorkingDirectory",
+                "${workspaceFolder}",
+                "-InterfaceCfg",
+                "${config:workproject.openocdInterfaceCfg}",
+                "-TargetCfg",
+                "${config:workproject.openocdTargetCfg}"
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}",
+                "shell": {
+                    "executable": "C:\\Windows\\System32\\cmd.exe",
+                    "args": [
+                        "/d",
+                        "/c"
+                    ]
+                }
             },
             "isBackground": true,
             "problemMatcher": {
@@ -31,7 +41,7 @@
                 "background": {
                     "activeOnStart": true,
                     "beginsPattern": "Open On-Chip Debugger",
-                    "endsPattern": "for telnet connections"
+                    "endsPattern": "Listening on port"
                 }
             },
             "presentation": {
@@ -43,18 +53,18 @@
             "label": "bootloader-build",
             "type": "shell",
             "hide": true,
-            "command": "${env:MAKE_EXE}",
+            "command": "powershell",
             "args": [
-                "-j8",
-                "all",
-                "COMPILER_PATH=${env:COMPILER_PATH}",
-                "PREFIX=riscv64-unknown-elf-",
-                "MARCH=rv32imfc_zicsr",
-                "MABI=ilp32f",
-                "OPTIMISATION=-Os"
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/tools/run_make.ps1",
+                "-WorkingDirectory",
+                "${workspaceFolder}/bootloader"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/bootloader",
+                "cwd": "${workspaceFolder}",
                 "shell": {
                     "executable": "C:\\Windows\\System32\\cmd.exe",
                     "args": [
@@ -76,18 +86,18 @@
         {
             "label": "app-build",
             "type": "shell",
-            "command": "${env:MAKE_EXE}",
+            "command": "powershell",
             "args": [
-                "-j8",
-                "all",
-                "COMPILER_PATH=${env:COMPILER_PATH}",
-                "PREFIX=riscv64-unknown-elf-",
-                "MARCH=rv32imfc_zicsr",
-                "MABI=ilp32f",
-                "OPTIMISATION=-Os"
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/tools/run_make.ps1",
+                "-WorkingDirectory",
+                "${workspaceFolder}/${input:appProjectDir}"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/${input:appProjectDir}",
+                "cwd": "${workspaceFolder}",
                 "shell": {
                     "executable": "C:\\Windows\\System32\\cmd.exe",
                     "args": [
@@ -172,7 +182,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "& { if ('${input:appBuildMode}' -eq 'build') { Push-Location '${workspaceFolder}/${input:appProjectDir}'; try { & '${env:MAKE_EXE}' all 'COMPILER_PATH=${env:COMPILER_PATH}' 'PREFIX=riscv64-unknown-elf-' 'MARCH=rv32imfc_zicsr' 'MABI=ilp32f' 'OPTIMISATION=-Os' 'TARGET_NAME=${input:appProjectName}'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } finally { Pop-Location } }; & '${config:workproject.pythonExe}' '${workspaceFolder}/bootloader/boot.py' '--port' '${config:workproject.bootPort}' '--bin' '${workspaceFolder}/${input:appProjectDir}/build/${input:appProjectName}.bin' '--baud' '${config:workproject.bootBaud}' '--timeout' '${config:workproject.bootTimeout}'; exit $LASTEXITCODE }"
+                "& { if ('${input:appBuildMode}' -eq 'build') { try { & '${workspaceFolder}/tools/run_make.ps1' -WorkingDirectory '${workspaceFolder}/${input:appProjectDir}' -TargetName '${input:appProjectName}'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } catch { exit 1 } }; & '${config:workproject.pythonExe}' '${workspaceFolder}/bootloader/boot.py' '--port' '${config:workproject.bootPort}' '--bin' '${workspaceFolder}/${input:appProjectDir}/build/${input:appProjectName}.bin' '--baud' '${config:workproject.bootBaud}' '--timeout' '${config:workproject.bootTimeout}'; exit $LASTEXITCODE }"
             ],
             "options": {
                 "cwd": "${workspaceFolder}",
@@ -199,7 +209,7 @@
                 "-ExecutionPolicy",
                 "Bypass",
                 "-Command",
-                "& { if ('${input:appBuildMode}' -eq 'build') { Push-Location '${workspaceFolder}/${input:appProjectDir}'; try { & '${env:MAKE_EXE}' all 'COMPILER_PATH=${env:COMPILER_PATH}' 'PREFIX=riscv64-unknown-elf-' 'MARCH=rv32imfc_zicsr' 'MABI=ilp32f' 'OPTIMISATION=-Os' 'TARGET_NAME=${input:appProjectName}'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } finally { Pop-Location } }; & '${config:workproject.pythonExe}' '${workspaceFolder}/tools/osdp_filetransfer.py' '--port' '${config:workproject.osdpPort}' '--baud' '${config:workproject.osdpBaud}' '--addr' '${config:workproject.osdpAddr}' '--frag' '${config:workproject.osdpFrag}' '${workspaceFolder}/${input:appProjectDir}/build/${input:appProjectName}.bin'; exit $LASTEXITCODE }"
+                "& { if ('${input:appBuildMode}' -eq 'build') { try { & '${workspaceFolder}/tools/run_make.ps1' -WorkingDirectory '${workspaceFolder}/${input:appProjectDir}' -TargetName '${input:appProjectName}'; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } } catch { exit 1 } }; & '${config:workproject.pythonExe}' '${workspaceFolder}/tools/osdp_filetransfer.py' '--port' '${config:workproject.osdpPort}' '--baud' '${config:workproject.osdpBaud}' '--addr' '${config:workproject.osdpAddr}' '--frag' '${config:workproject.osdpFrag}' '${workspaceFolder}/${input:appProjectDir}/build/${input:appProjectName}.bin'; exit $LASTEXITCODE }"
             ],
             "options": {
                 "cwd": "${workspaceFolder}",

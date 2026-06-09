@@ -8,7 +8,7 @@
 #include "handlers/osdp_internal_api.h"
 #include "osdp_runtime.h"
 
-static osdp_context_t g_parser_ctx;
+static osdp_parser_ctx_t g_parser_ctx;
 
 static const osdp_dispatch_entry_t g_dispatch_table[] = {
     { osdp_POLL, osdp_handle_cmd_basic },
@@ -23,7 +23,7 @@ static const osdp_dispatch_entry_t g_dispatch_table[] = {
     { osdp_FILETRANSFER, osdp_handle_cmd_filetransfer }
 };
 
-static void osdp_on_frame_received(osdp_context_t *ctx, const uint8_t *frame, uint16_t frame_len)
+static void osdp_on_frame_received(osdp_parser_ctx_t *ctx, const uint8_t *frame, uint16_t frame_len)
 {
     (void)ctx;
     if (osdp_crc_is_ok(frame, frame_len)) {

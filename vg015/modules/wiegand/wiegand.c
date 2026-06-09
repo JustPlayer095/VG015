@@ -8,6 +8,8 @@
 #define WIEGAND_READERS_COUNT 2u
 #define WIEGAND_FRAME_TIMEOUT_MS 20u
 #define WIEGAND_MAX_BITS 56u
+#define WIEGAND_COOLDOWN_MS 3000u
+#define WIEGAND_OVERFLOW_COOLDOWN_MS 5u
 //#define WIEGAND_HW_TEST_ENABLE 1u
 #define WIEGAND_TEST_PULSE_LOW_MS 2u
 #define WIEGAND_TEST_PULSE_GAP_MS 2u
@@ -25,6 +27,7 @@ typedef struct {
     uint8_t bit_count;
     uint32_t last_bit_ms;
     uint8_t frame_active;
+    uint32_t cooldown_ms_left;
 } wiegand_reader_state_t;
 
 static const wiegand_line_t g_lines[] = {
@@ -33,6 +36,9 @@ static const wiegand_line_t g_lines[] = {
     { GPIOB, GPIO_Pin_14, 1u, 0u }, /* R1 W0 */
     { GPIOB, GPIO_Pin_15, 1u, 1u }  /* R1 W1 */
 };
+
+/* 0 = принимать любую поддерживаемую длину */
+static const uint8_t g_reader_expected_bits[WIEGAND_READERS_COUNT] = { 0u, 0u };
 
 static wiegand_reader_state_t g_readers[WIEGAND_READERS_COUNT];
 
@@ -169,6 +175,43 @@ static void wiegand_test_tick_1ms(void)
 }
 #endif
 
+static uint8_t wiegand_parity_ok_26(uint64_t bits)
+{
+    uint8_t i;
+    uint8_t p_even = (uint8_t)((bits >> 25u) & 1u);
+    uint8_t p_odd  = (uint8_t)(bits & 1u);
+    uint8_t cnt_even = 0u;
+    uint8_t cnt_odd  = 0u;
+
+    for (i = 13u; i <= 24u; ++i) {
+        cnt_even ^= (uint8_t)((bits >> i) & 1u);
+    }
+    for (i = 1u; i <= 12u; ++i) {
+        cnt_odd ^= (uint8_t)((bits >> i) & 1u);
+    }
+
+    /* even parity: p_even XOR data = 0; odd parity: p_odd XOR data = 1 */
+    return (p_even == cnt_even) && (p_odd != cnt_odd);
+}
+
+static uint8_t wiegand_parity_ok_34(uint64_t bits)
+{
+    uint8_t i;
+    uint8_t p_even   = (uint8_t)((bits >> 33u) & 1u);
+    uint8_t p_odd    = (uint8_t)(bits & 1u);
+    uint8_t cnt_even = 0u;
+    uint8_t cnt_odd  = 0u;
+
+    for (i = 17u; i <= 32u; ++i) {
+        cnt_even ^= (uint8_t)((bits >> i) & 1u);
+    }
+    for (i = 1u; i <= 16u; ++i) {
+        cnt_odd ^= (uint8_t)((bits >> i) & 1u);
+    }
+
+    return (p_even == cnt_even) && (p_odd != cnt_odd);
+}
+
 static uint8_t wiegand_is_supported_length(uint8_t bits)
 {
     switch (bits) {
@@ -190,12 +233,14 @@ static void wiegand_reset_reader(uint8_t reader)
     g_readers[reader].bit_count = 0u;
     g_readers[reader].last_bit_ms = 0u;
     g_readers[reader].frame_active = 0u;
+    g_readers[reader].cooldown_ms_left = WIEGAND_COOLDOWN_MS;
 }
 
 static void wiegand_push_reader_frame(uint8_t reader)
 {
     uint8_t payload[8];
     uint8_t bytes;
+    uint8_t bit_count;
     uint8_t i;
     uint64_t bits;
 
@@ -203,26 +248,49 @@ static void wiegand_push_reader_frame(uint8_t reader)
         return;
     }
 
-    if (!wiegand_is_supported_length(g_readers[reader].bit_count)) {
-        wiegand_reset_reader(reader);
+    bit_count = g_readers[reader].bit_count;
+    bits = g_readers[reader].bits;
+    g_readers[reader].bits = 0u;
+    g_readers[reader].bit_count = 0u;
+    g_readers[reader].last_bit_ms = 0u;
+    g_readers[reader].frame_active = 0u;
+    g_readers[reader].cooldown_ms_left = WIEGAND_COOLDOWN_MS;
+
+    {
+        uint8_t expected = g_reader_expected_bits[reader];
+        if (expected != 0u) {
+            if (bit_count != expected) {
+                g_readers[reader].cooldown_ms_left = 0u;
+                return;
+            }
+        } else if (!wiegand_is_supported_length(bit_count)) {
+            g_readers[reader].cooldown_ms_left = 0u;
+            return;
+        }
+    }
+
+    if ((bit_count == 26u && !wiegand_parity_ok_26(bits)) ||
+        (bit_count == 34u && !wiegand_parity_ok_34(bits))) {
+        g_readers[reader].cooldown_ms_left = 0u;
         return;
     }
 
-    bytes = (uint8_t)((g_readers[reader].bit_count + 7u) / 8u);
-    bits = g_readers[reader].bits;
+    bytes = (uint8_t)((bit_count + 7u) / 8u);
 
     for (i = 0u; i < bytes; ++i) {
         payload[(bytes - 1u) - i] = (uint8_t)(bits & 0xFFu);
         bits >>= 8;
     }
-
-    osdp_enqueue_raw_card(reader, g_readers[reader].bit_count, payload, bytes);
-    wiegand_reset_reader(reader);
+    osdp_enqueue_raw_card(reader, bit_count, payload, bytes);
 }
 
 static void wiegand_on_bit(uint8_t reader, uint8_t bit_value, uint32_t now_ms)
 {
     if (reader >= WIEGAND_READERS_COUNT) {
+        return;
+    }
+
+    if (g_readers[reader].cooldown_ms_left > 0u) {
         return;
     }
 
@@ -233,7 +301,11 @@ static void wiegand_on_bit(uint8_t reader, uint8_t bit_value, uint32_t now_ms)
     }
 
     if (g_readers[reader].bit_count >= WIEGAND_MAX_BITS) {
-        wiegand_reset_reader(reader);
+        g_readers[reader].bits = 0u;
+        g_readers[reader].bit_count = 0u;
+        g_readers[reader].last_bit_ms = 0u;
+        g_readers[reader].frame_active = 0u;
+        g_readers[reader].cooldown_ms_left = WIEGAND_OVERFLOW_COOLDOWN_MS;
         return;
     }
 
@@ -251,7 +323,12 @@ void wiegand_init(void)
 
     for (i = 0u; i < WIEGAND_READERS_COUNT; ++i) {
         wiegand_reset_reader(i);
+        g_readers[i].cooldown_ms_left = 0u;
     }
+
+    /* 3 samples × 50 ticks × 20ns = 3µs glitch filter at 50MHz.
+     * Rejects noise spikes (<3µs) while passing Wiegand pulses (>=20µs). */
+    GPIO_QualSampleConfig(GPIOB, 50u);
 
     for (i = 0u; i < (uint8_t)(sizeof(g_lines) / sizeof(g_lines[0])); ++i) {
         GPIO_Init_TypeDef gpio;
@@ -263,6 +340,9 @@ void wiegand_init(void)
         gpio.PullMode = GPIO_PullMode_PU;
         gpio.OutMode = GPIO_OutMode_PP;
         GPIO_Init(g_lines[i].port, &gpio);
+
+        GPIO_QualModeConfig(g_lines[i].port, g_lines[i].pin, GPIO_QualMode_3Sample);
+        GPIO_QualCmd(g_lines[i].port, g_lines[i].pin, ENABLE);
 
         GPIO_ITTypeConfig(g_lines[i].port, g_lines[i].pin, GPIO_IntType_Edge);
         GPIO_ITPolConfig(g_lines[i].port, g_lines[i].pin, GPIO_IntPol_Negative);
@@ -295,7 +375,11 @@ void wiegand_tick_1ms(void)
     uint32_t now_ms = ms_ticks;
 
     for (i = 0u; i < WIEGAND_READERS_COUNT; ++i) {
-        if (!g_readers[i].frame_active) {
+        if (g_readers[i].cooldown_ms_left > 0u) {
+            g_readers[i].cooldown_ms_left--;
+        }
+
+        if (!g_readers[i].frame_active || g_readers[i].cooldown_ms_left > 0u) {
             continue;
         }
 

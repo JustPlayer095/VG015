@@ -5,20 +5,31 @@
         {
             "label": "start-openocd",
             "type": "shell",
-            "command": "C:\\Users\\kac\\.niiet_aspect\\riscv_kit_windows\\bin\\openocd.exe", 
+            "command": "powershell",
             "args": [
-                "-s", "C:\\Users\\kac\\.niiet_aspect\\riscv_kit_windows",
-                "-s", "C:\\Users\\kac\\.niiet_aspect\\riscv_kit_windows\\interface",
-                "-s", "C:\\Users\\kac\\.niiet_aspect\\riscv_kit_windows\\target",
-                "-f", "./interface/onboard_ftdi.cfg",
-                "-f", "./target/k1921vg015.cfg",
-                "-c", "init;halt",
-                "-d1"
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/../tools/run_openocd.ps1",
+                "-WorkingDirectory",
+                "${workspaceFolder}/..",
+                "-InterfaceCfg",
+                "./interface/jlink.cfg",
+                "-TargetCfg",
+                "./target/k1921vg015.cfg"
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/..",
+                "shell": {
+                    "executable": "C:\\Windows\\System32\\cmd.exe",
+                    "args": [
+                        "/d",
+                        "/c"
+                    ]
+                }
             },
-            "isBackground": true, 
+            "isBackground": true,
             "problemMatcher": {
                 "pattern": [
                     {
@@ -31,11 +42,11 @@
                 "background": {
                     "activeOnStart": true,
                     "beginsPattern": "Open On-Chip Debugger",
-                    "endsPattern": "for telnet connections" 
+                    "endsPattern": "Listening on port"
                 }
             },
             "presentation": {
-                "reveal": "silent", 
+                "reveal": "silent",
                 "panel": "dedicated"
             }
         }

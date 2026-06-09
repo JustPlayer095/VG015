@@ -1,14 +1,14 @@
 #include "osdp_parser.h"
 #include "osdp_frame.h"
 
-void osdp_parser_reset(osdp_context_t *ctx)
+void osdp_parser_reset(osdp_parser_ctx_t *ctx)
 {
     ctx->rx_state = osdp_rx_wait_som;
     ctx->rx_expected_len = 0;
     ctx->rx_pos = 0;
 }
 
-void osdp_parser_on_byte(osdp_context_t *ctx, uint8_t byte, osdp_parser_frame_cb_t cb)
+void osdp_parser_on_byte(osdp_parser_ctx_t *ctx, uint8_t byte, osdp_parser_frame_cb_t cb)
 {
     switch (ctx->rx_state) {
     case osdp_rx_wait_som:

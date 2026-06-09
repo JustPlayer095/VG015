@@ -718,7 +718,6 @@ void osdp_handle_filetransfer(uint8_t seq, const uint8_t *data, uint16_t data_le
                 }
                 osdp_build_and_send_ftstat(seq, (int16_t)1);
                 g_runtime_ctx.file_tx.active = 0u;
-                osdp_port_delay_ms(50u);
                 osdp_port_do_reset();
                 return;
             }
@@ -793,6 +792,8 @@ void osdp_runtime_init(void)
     uint8_t i;
 
     osdp_load_addr_baud();
+    /* main.c leaves UART4 at a fixed rate; align hardware with stored OSDP baud. */
+    osdp_port_set_uart_baud(g_runtime_ctx.baud);
     osdp_port_extflash_init();
     update_flag_led_init();
     update_flag_led_set(osdp_port_update_flag_is_pending());

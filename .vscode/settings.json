@@ -13,7 +13,7 @@
   "workproject.optimisation": "-O0",
   "workproject.openocdExe": "${env:OPENOCD_EXE}",
   "workproject.openocdScriptsRoot": "${env:OPENOCD_SCRIPTS_ROOT}",
-  "workproject.openocdInterfaceCfg": "./interface/onboard_ftdi.cfg",
+  "workproject.openocdInterfaceCfg": "./interface/jlink.cfg",
   "workproject.openocdTargetCfg": "./target/k1921vg015.cfg",
   "workproject.openocdInitCmd": "init;halt",
   "workproject.gdbExe": "${env:GDB_EXE}",

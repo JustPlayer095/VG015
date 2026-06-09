@@ -33,6 +33,7 @@ typedef struct __attribute__((packed)) {
 
 typedef struct __attribute__((packed)) {
     uint32_t seq;
+    uint32_t crc32;  /* CRC32 of cfg; computed on save, verified on load */
     config_storage_t cfg;
 } config_flash_record_t;
 

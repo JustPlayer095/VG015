@@ -1,0 +1,5765 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "626e11612bc5eb804c54ef4dbc17cac028a34acf",
+  "generatedAt": "2026-05-26T14:45:34.029Z",
+  "files": {
+    ".understand-anything/.understandignore": {
+      "filePath": ".understand-anything/.understandignore",
+      "contentHash": "9dd1f34389121fce868721f872fae3afc75d7034a56624a635247af39405258c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 42,
+      "hasStructuralAnalysis": false
+    },
+    ".understand-anything/config.json": {
+      "filePath": ".understand-anything/config.json",
+      "contentHash": "92a57d40119389447c9d824b1710815556af58055f633e0b4d7d84e96a63e9da",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 2,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/boot.py": {
+      "filePath": "bootloader/boot.py",
+      "contentHash": "a922a869d992b19b1c28ba553b95788b866ba96f9f6458b88600440db222882b",
+      "functions": [
+        {
+          "name": "crc32_bl",
+          "params": [
+            "data"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "read_byte",
+          "params": [
+            "ser",
+            "timeout_s",
+            "what"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "expect",
+          "params": [
+            "ser",
+            "expected",
+            "timeout_s",
+            "what"
+          ],
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "explain_error",
+          "params": [
+            "code"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_port_sort_key",
+          "params": [
+            "port_info"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_port_score",
+          "params": [
+            "port_info"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "_port_line",
+          "params": [
+            "port_info"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "list_serial_ports",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "_filter_ports",
+          "params": [
+            "ports",
+            "pattern"
+          ],
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "detect_serial_port",
+          "params": [
+            "pattern"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 37
+        },
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 75
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "argparse",
+          "specifiers": [
+            "argparse"
+          ]
+        },
+        {
+          "source": "re",
+          "specifiers": [
+            "re"
+          ]
+        },
+        {
+          "source": "struct",
+          "specifiers": [
+            "struct"
+          ]
+        },
+        {
+          "source": "sys",
+          "specifiers": [
+            "sys"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "serial",
+          "specifiers": [
+            "serial"
+          ]
+        },
+        {
+          "source": "serial.tools",
+          "specifiers": [
+            "list_ports"
+          ]
+        }
+      ],
+      "exports": [
+        "crc32_bl",
+        "read_byte",
+        "expect",
+        "explain_error",
+        "_port_sort_key",
+        "_port_score",
+        "_port_line",
+        "list_serial_ports",
+        "_filter_ports",
+        "detect_serial_port",
+        "main"
+      ],
+      "totalLines": 272,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/device/ldscripts/k1921vg015_boot.ld": {
+      "filePath": "bootloader/device/ldscripts/k1921vg015_boot.ld",
+      "contentHash": "18f29bfb199f23dd36643fadd33975294e707a10ced5ac54b501808ee2648eb9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "bootloader/include/bl_config.h": {
+      "filePath": "bootloader/include/bl_config.h",
+      "contentHash": "c4467883f093430617a93c21e347edf495495ff1496b50a624567101472ca6a5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 29,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/include/bl_crc32.h": {
+      "filePath": "bootloader/include/bl_crc32.h",
+      "contentHash": "90686ac4bc5958bca5f943b5428193f92f482ae29af886ae9517d214993195fe",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 9,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/include/bl_extflash_w25q32.h": {
+      "filePath": "bootloader/include/bl_extflash_w25q32.h",
+      "contentHash": "fa137196cc1995b0ff4605dfd4463ab3b1566a193d7eaeb9f9f0df51bb880a09",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 20,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/include/bl_hal.h": {
+      "filePath": "bootloader/include/bl_hal.h",
+      "contentHash": "26b9124a089d4d5436fb7456f7dc2dd2013fe2f397e61605b08b4ba6518bb8c6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 20,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/include/bl_image.h": {
+      "filePath": "bootloader/include/bl_image.h",
+      "contentHash": "25744d1d0d1d82f0633848306f7074dc8d980c0018ad2dcb15aaf4e4e4f0c19c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 17,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/include/bl_jump.h": {
+      "filePath": "bootloader/include/bl_jump.h",
+      "contentHash": "96cfea39ed6e5ab7bd3477180075467b307e0d59028bcc45873c758db5aa0d9a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 9,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/Makefile": {
+      "filePath": "bootloader/Makefile",
+      "contentHash": "d28b78790e28816fe7415cb84b23b4b6710f6351ae8b1ed1ce0f68a073a3008a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 140,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/README.md": {
+      "filePath": "bootloader/README.md",
+      "contentHash": "5a9ab6d3e646ec88377015040c46a10d21b289ffa00da57b0d484ae71fa0e061",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 113,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/src/bl_crc32.c": {
+      "filePath": "bootloader/src/bl_crc32.c",
+      "contentHash": "dd0b85cf992df853529f84a40c4b2b4218b2fc642f633fff845ff9e8fb86555e",
+      "functions": [
+        {
+          "name": "bl_crc32_hw_prepare",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "bl_crc32_calc",
+          "params": [
+            "data",
+            "len"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 15
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../include/bl_crc32.h",
+          "specifiers": [
+            "../include/bl_crc32.h"
+          ]
+        },
+        {
+          "source": "../../vg015/device/include/K1921VG015.h",
+          "specifiers": [
+            "../../vg015/device/include/K1921VG015.h"
+          ]
+        }
+      ],
+      "exports": [
+        "bl_crc32_calc"
+      ],
+      "totalLines": 39,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/src/bl_extflash_w25q32.c": {
+      "filePath": "bootloader/src/bl_extflash_w25q32.c",
+      "contentHash": "827eb22c186a7fb5d120a6c34acb34a3532d9fc5b8390d03800511c4649f01cd",
+      "functions": [
+        {
+          "name": "bl_extflash_init_spi0_cs_pb1",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "spi0_init_for_extflash",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 30
+        },
+        {
+          "name": "gpio_init_spi_pins",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 16
+        },
+        {
+          "name": "extflash_cs_low",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "extflash_cs_high",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "extflash_spi_xfer",
+          "params": [
+            "byte"
+          ],
+          "returnType": "uint8_t",
+          "exported": false,
+          "lineCount": 11
+        },
+        {
+          "name": "extflash_release_power_down",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 16
+        },
+        {
+          "name": "extflash_spi_flush_rx",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "extflash_short_delay",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "bl_extflash_read",
+          "params": [
+            "addr",
+            "dst",
+            "len"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 21
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../include/bl_extflash_w25q32.h",
+          "specifiers": [
+            "../include/bl_extflash_w25q32.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "../../vg015/device/include/K1921VG015.h",
+          "specifiers": [
+            "../../vg015/device/include/K1921VG015.h"
+          ]
+        },
+        {
+          "source": "../../vg015/plib/inc/plib015_gpio.h",
+          "specifiers": [
+            "../../vg015/plib/inc/plib015_gpio.h"
+          ]
+        }
+      ],
+      "exports": [
+        "bl_extflash_init_spi0_cs_pb1",
+        "bl_extflash_read"
+      ],
+      "totalLines": 160,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/src/bl_hal.c": {
+      "filePath": "bootloader/src/bl_hal.c",
+      "contentHash": "16b928c7810f07c45f545f74525b4bf45d4f5a535ee50269ed18fe44d1b84ae4",
+      "functions": [
+        {
+          "name": "bl_flash_wait_ready",
+          "params": [
+            "loops"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "bl_flash_offs",
+          "params": [
+            "abs_addr"
+          ],
+          "returnType": "uint32_t",
+          "exported": false,
+          "lineCount": 3
+        },
+        {
+          "name": "bl_flash_erase_page",
+          "params": [
+            "abs_addr"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "bl_flash_write16",
+          "params": [
+            "abs_addr",
+            "data",
+            "len"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 28
+        },
+        {
+          "name": "bl_flash_read_block16",
+          "params": [
+            "abs_addr",
+            "out_block"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 14
+        },
+        {
+          "name": "bl_hal_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 42
+        },
+        {
+          "name": "bl_hal_uart_putc",
+          "params": [
+            "byte"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "bl_hal_uart_wait_tx_idle",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "bl_hal_uart_get",
+          "params": [
+            "dst",
+            "len",
+            "timeout_ms"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 21
+        },
+        {
+          "name": "bl_hal_is_update_button_pressed",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "bl_hal_set_update_mode_leds",
+          "params": [
+            "on"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "bl_hal_set_error_code",
+          "params": [
+            "code"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "bl_hal_flash_erase_range",
+          "params": [
+            "abs_addr",
+            "size_bytes"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "bl_hal_flash_write",
+          "params": [
+            "abs_addr",
+            "data",
+            "len"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 41
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../include/bl_hal.h",
+          "specifiers": [
+            "../include/bl_hal.h"
+          ]
+        },
+        {
+          "source": "../../vg015/device/include/K1921VG015.h",
+          "specifiers": [
+            "../../vg015/device/include/K1921VG015.h"
+          ]
+        }
+      ],
+      "exports": [
+        "bl_hal_init",
+        "bl_hal_uart_putc",
+        "bl_hal_uart_wait_tx_idle",
+        "bl_hal_uart_get",
+        "bl_hal_is_update_button_pressed",
+        "bl_hal_set_update_mode_leds",
+        "bl_hal_set_error_code",
+        "bl_hal_flash_erase_range",
+        "bl_hal_flash_write"
+      ],
+      "totalLines": 278,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/src/bl_image.c": {
+      "filePath": "bootloader/src/bl_image.c",
+      "contentHash": "4e74f37334ede82476670e1ac83595a59626bde716a0364bae3337e43eedb3cd",
+      "functions": [
+        {
+          "name": "bl_image_header_is_valid",
+          "params": [
+            "hdr"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "bl_image_is_valid",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "bl_image_get_size",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../include/bl_image.h",
+          "specifiers": [
+            "../include/bl_image.h"
+          ]
+        },
+        {
+          "source": "../include/bl_config.h",
+          "specifiers": [
+            "../include/bl_config.h"
+          ]
+        },
+        {
+          "source": "../include/bl_crc32.h",
+          "specifiers": [
+            "../include/bl_crc32.h"
+          ]
+        }
+      ],
+      "exports": [
+        "bl_image_header_is_valid",
+        "bl_image_is_valid",
+        "bl_image_get_size"
+      ],
+      "totalLines": 41,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/src/bl_jump.c": {
+      "filePath": "bootloader/src/bl_jump.c",
+      "contentHash": "a76aa781042ae865c115e79aaa4bf775c0acc72099822657c8ffdc1a5de32ef2",
+      "functions": [
+        {
+          "name": "bl_disable_interrupts",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "bl_jump_to_app",
+          "params": [
+            "app_entry"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "bl_jump.h",
+          "specifiers": [
+            "bl_jump.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        }
+      ],
+      "exports": [
+        "bl_jump_to_app"
+      ],
+      "totalLines": 19,
+      "hasStructuralAnalysis": true
+    },
+    "bootloader/src/bl_main.c": {
+      "filePath": "bootloader/src/bl_main.c",
+      "contentHash": "821ed8a2ca3da1c1c223ce5a23e5eeb25fdbe2c667bb9da74a07c69a36ae14a1",
+      "functions": [
+        {
+          "name": "bl_proto_send",
+          "params": [
+            "code"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 3
+        },
+        {
+          "name": "bl_proto_receive_header",
+          "params": [
+            "timeout_ms",
+            "out_hdr"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 3
+        },
+        {
+          "name": "bl_flash_program_image",
+          "params": [
+            "hdr"
+          ],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 46
+        },
+        {
+          "name": "bl_update_requested",
+          "params": [],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 3
+        },
+        {
+          "name": "bl_receive_and_program",
+          "params": [],
+          "returnType": "int",
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "bl_enter_update_mode",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 26
+        },
+        {
+          "name": "main",
+          "params": [],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 22
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../include/bl_image.h",
+          "specifiers": [
+            "../include/bl_image.h"
+          ]
+        },
+        {
+          "source": "../include/bl_jump.h",
+          "specifiers": [
+            "../include/bl_jump.h"
+          ]
+        },
+        {
+          "source": "../include/bl_config.h",
+          "specifiers": [
+            "../include/bl_config.h"
+          ]
+        },
+        {
+          "source": "../include/bl_hal.h",
+          "specifiers": [
+            "../include/bl_hal.h"
+          ]
+        },
+        {
+          "source": "../include/bl_crc32.h",
+          "specifiers": [
+            "../include/bl_crc32.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "stdbool.h",
+          "specifiers": [
+            "stdbool.h"
+          ]
+        },
+        {
+          "source": "stddef.h",
+          "specifiers": [
+            "stddef.h"
+          ]
+        }
+      ],
+      "exports": [
+        "main"
+      ],
+      "totalLines": 288,
+      "hasStructuralAnalysis": true
+    },
+    "tools/osdp_filetransfer.py": {
+      "filePath": "tools/osdp_filetransfer.py",
+      "contentHash": "d5460489674ab399b32290d1f258337828c51daed53717be4b2e9cfa1b66c636",
+      "functions": [
+        {
+          "name": "ccitt_crc16",
+          "params": [
+            "data",
+            "init"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "crc32_bl",
+          "params": [
+            "data"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "_port_sort_key",
+          "params": [
+            "port_info"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "_port_score",
+          "params": [
+            "port_info"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "_port_line",
+          "params": [
+            "port_info"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "list_serial_ports",
+          "params": [],
+          "returnType": "None",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "detect_serial_port",
+          "params": [
+            "port_filter"
+          ],
+          "returnType": "str",
+          "exported": true,
+          "lineCount": 43
+        },
+        {
+          "name": "build_osdp_frame",
+          "params": [
+            "addr",
+            "seq",
+            "cmd",
+            "data"
+          ],
+          "returnType": "bytes",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "parse_ftstat",
+          "params": [
+            "frame"
+          ],
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "read_osdp_frame",
+          "params": [
+            "ser",
+            "timeout_s"
+          ],
+          "returnType": "bytes",
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "send_file",
+          "params": [
+            "port",
+            "baud",
+            "addr",
+            "image_path",
+            "fragment_size",
+            "port_filter",
+            "resp_timeout"
+          ],
+          "exported": true,
+          "lineCount": 82
+        },
+        {
+          "name": "main",
+          "params": [],
+          "exported": true,
+          "lineCount": 17
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "argparse",
+          "specifiers": [
+            "argparse"
+          ]
+        },
+        {
+          "source": "struct",
+          "specifiers": [
+            "struct"
+          ]
+        },
+        {
+          "source": "time",
+          "specifiers": [
+            "time"
+          ]
+        },
+        {
+          "source": "pathlib",
+          "specifiers": [
+            "Path"
+          ]
+        },
+        {
+          "source": "serial",
+          "specifiers": [
+            "serial"
+          ]
+        },
+        {
+          "source": "serial.tools",
+          "specifiers": [
+            "list_ports"
+          ]
+        }
+      ],
+      "exports": [
+        "ccitt_crc16",
+        "crc32_bl",
+        "_port_sort_key",
+        "_port_score",
+        "_port_line",
+        "list_serial_ports",
+        "detect_serial_port",
+        "build_osdp_frame",
+        "parse_ftstat",
+        "read_osdp_frame",
+        "send_file",
+        "main"
+      ],
+      "totalLines": 362,
+      "hasStructuralAnalysis": true
+    },
+    "tools/run_make.ps1": {
+      "filePath": "tools/run_make.ps1",
+      "contentHash": "92f6ecd64f9e589a972acceb96c1762554e4777d5fd1ad4058b84382cc55ae03",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 62,
+      "hasStructuralAnalysis": false
+    },
+    "tools/run_openocd.ps1": {
+      "filePath": "tools/run_openocd.ps1",
+      "contentHash": "e8ede36e0c8b4ca6edc5bf2a8ccabd4646485d4dd488d1b8e20e6a78e79a693b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 50,
+      "hasStructuralAnalysis": false
+    },
+    "tools/setup_toolchain_env.ps1": {
+      "filePath": "tools/setup_toolchain_env.ps1",
+      "contentHash": "27ee13e4a8c9e50ab8df8b963890432313f4c3b21ae46fb632cf7f95296b2b56",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 154,
+      "hasStructuralAnalysis": false
+    },
+    "vg015/bsp/bsp.c": {
+      "filePath": "vg015/bsp/bsp.c",
+      "contentHash": "c92c3bb4e70be07ef9afa391fa6e85791ec99245d59157c57cd891a9b47243d2",
+      "functions": [
+        {
+          "name": "BSP_LED_Init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "BSP_LED_Toggle",
+          "params": [
+            "leds"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "BSP_LED_On",
+          "params": [
+            "leds"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "BSP_LED_Off",
+          "params": [
+            "leds"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "BSP_Btn_Init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "BSP_Btn_IsPressed",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "BTN_IRQ_HANDLER",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "bsp.h",
+          "specifiers": [
+            "bsp.h"
+          ]
+        }
+      ],
+      "exports": [
+        "BSP_LED_Init",
+        "BSP_LED_Toggle",
+        "BSP_LED_On",
+        "BSP_LED_Off",
+        "BSP_Btn_Init",
+        "BSP_Btn_IsPressed",
+        "BTN_IRQ_HANDLER"
+      ],
+      "totalLines": 80,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/bsp/bsp.h": {
+      "filePath": "vg015/bsp/bsp.h",
+      "contentHash": "c80f305f9f98511452a050a949621780e6f3f40ea967186189155b7a70e7623e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 70,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/arch.h": {
+      "filePath": "vg015/device/include/arch.h",
+      "contentHash": "a98d2485acd1247af2e432bde85165f6d17c6a91f36de4a0f97c8a0fc7958c04",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 308,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/csr.h": {
+      "filePath": "vg015/device/include/csr.h",
+      "contentHash": "b15370eaf534baa27bd7a7aae529ccf0a34d0aaec882b6ef4569cdae5f4a0529",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 78,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/K1921VG015.h": {
+      "filePath": "vg015/device/include/K1921VG015.h",
+      "contentHash": "7a97912cd8471f10449bc7e533cf742f83c1038176a3ddcb48b5c96a099a9000",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 12414,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/memasm.h": {
+      "filePath": "vg015/device/include/memasm.h",
+      "contentHash": "ae891e7ac498f9e84ef21b4a37fd25a0caeced3c2a3c9e79a9edcb31381ea710",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 270,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/mtimer.h": {
+      "filePath": "vg015/device/include/mtimer.h",
+      "contentHash": "f91cb5ab113101bc9c0fc9ab7b32acb155e3bcabf74f6371bacb30defbb96572",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 45,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/plic.h": {
+      "filePath": "vg015/device/include/plic.h",
+      "contentHash": "2b25c60b937b7d12b21b2f9122f18a7007e707a21c0a13803167c99d3cca6a44",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 69,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/retarget.h": {
+      "filePath": "vg015/device/include/retarget.h",
+      "contentHash": "d2236346718bdbb2854fb709440aff34ec5e530d4ac41715e7b599a1dcb60b95",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 47,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/riscv-csr.h": {
+      "filePath": "vg015/device/include/riscv-csr.h",
+      "contentHash": "fadb1201a86c8843e9642dbf159af47af319768de51b67a47e06106283be7cc5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 3784,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/riscv-irq.h": {
+      "filePath": "vg015/device/include/riscv-irq.h",
+      "contentHash": "bb52a2275234f8157bcf2b404122f4ddb4e7ba889165ad4afa9e39783d8d6762",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/stringify.h": {
+      "filePath": "vg015/device/include/stringify.h",
+      "contentHash": "cfe8c1215c17c5322a06ae47960b32dc95ac0ce0f60a02c0d91523a2867e9a22",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 13,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/include/system_k1921vg015.h": {
+      "filePath": "vg015/device/include/system_k1921vg015.h",
+      "contentHash": "a2f7f240c833b826bb1f2fe7fe1a9eb2ecc63d25a54deb91f9456e86e09646e5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 87,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/ldscripts/k1921vg015_common.lds": {
+      "filePath": "vg015/device/ldscripts/k1921vg015_common.lds",
+      "contentHash": "109b8b0d34881481bfe91ef1dc02dbdf5ce1d892f9ebff1a2bb59c8bdc5f08e1",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 153,
+      "hasStructuralAnalysis": false
+    },
+    "vg015/device/ldscripts/k1921vg015_flash_bl.ld": {
+      "filePath": "vg015/device/ldscripts/k1921vg015_flash_bl.ld",
+      "contentHash": "204d7e5d5ef6a1c5110162b5d91608a31dbc8e52b6fbf8f44e90511e785c0da3",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 25,
+      "hasStructuralAnalysis": false
+    },
+    "vg015/device/ldscripts/k1921vg015_flash.ld": {
+      "filePath": "vg015/device/ldscripts/k1921vg015_flash.ld",
+      "contentHash": "d6edd0bf3a11c611dceac06482ef5cea623adf6fdf3626395d04f46a04baa3d6",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "vg015/device/ldscripts/k1921vg015_ram.ld": {
+      "filePath": "vg015/device/ldscripts/k1921vg015_ram.ld",
+      "contentHash": "c033cf8f9ffd24fa0225d633a661936762acefed15e7cad314db362166a65165",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": false
+    },
+    "vg015/device/source/mtimer.c": {
+      "filePath": "vg015/device/source/mtimer.c",
+      "contentHash": "6a6784b07b25c2498b67552456629eb96694a65a0853d67e153712075843f4e2",
+      "functions": [
+        {
+          "name": "mtimer_set_raw_time_cmp",
+          "params": [
+            "clock_offset"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "mtimer_get_raw_time",
+          "params": [],
+          "returnType": "uint64_t",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "sleep",
+          "params": [
+            "ms"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "usleep",
+          "params": [
+            "us"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "mtimer.h",
+          "specifiers": [
+            "mtimer.h"
+          ]
+        }
+      ],
+      "exports": [
+        "mtimer_set_raw_time_cmp",
+        "mtimer_get_raw_time",
+        "sleep",
+        "usleep"
+      ],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/source/plic.c": {
+      "filePath": "vg015/device/source/plic.c",
+      "contentHash": "9a0bac8aa94cd35fd2fad753a414624b34e3997b9e277284140576519b821030",
+      "functions": [
+        {
+          "name": "PLIC_SetIrqHandler",
+          "params": [
+            "target",
+            "isr_num",
+            "func"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "PLIC_SetPriority",
+          "params": [
+            "isr_num",
+            "pri"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "PLIC_IntEnable",
+          "params": [
+            "target",
+            "isr_num"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "SetIrqHandler",
+          "params": [
+            "IsrVector",
+            "IRQHandler",
+            "Priority"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "PLIC_IntDisable",
+          "params": [
+            "target",
+            "isr_num"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "PLIC_ClaimIrq",
+          "params": [
+            "target"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "PLIC_ClaimComplete",
+          "params": [
+            "target",
+            "isrnum"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "PLIC_SetThreshold",
+          "params": [
+            "target",
+            "value"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "PLIC_MachHandler",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "trap_handler",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 40
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "csr.h",
+          "specifiers": [
+            "csr.h"
+          ]
+        },
+        {
+          "source": "plic.h",
+          "specifiers": [
+            "plic.h"
+          ]
+        }
+      ],
+      "exports": [
+        "PLIC_SetIrqHandler",
+        "PLIC_SetPriority",
+        "PLIC_IntEnable",
+        "SetIrqHandler",
+        "PLIC_IntDisable",
+        "PLIC_ClaimIrq",
+        "PLIC_ClaimComplete",
+        "PLIC_SetThreshold",
+        "PLIC_MachHandler",
+        "trap_handler"
+      ],
+      "totalLines": 225,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/source/printf.c": {
+      "filePath": "vg015/device/source/printf.c",
+      "contentHash": "e1736b284a94642e6f68ceadac3b73cb23c1cb858179151bd14639f2dd201b07",
+      "functions": [
+        {
+          "name": "PrintChar",
+          "params": [
+            "c"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "PutChar",
+          "params": [
+            "pStr",
+            "c"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "PutString",
+          "params": [
+            "pStr",
+            "pSource"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "PutUnsignedInt",
+          "params": [
+            "pStr",
+            "fill",
+            "width",
+            "value"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 35
+        },
+        {
+          "name": "PutSignedInt",
+          "params": [
+            "pStr",
+            "fill",
+            "width",
+            "value"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 65
+        },
+        {
+          "name": "PutHexa",
+          "params": [
+            "pStr",
+            "fill",
+            "width",
+            "maj",
+            "value"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 47
+        },
+        {
+          "name": "vsnprintf",
+          "params": [
+            "pStr",
+            "length",
+            "pFormat",
+            "ap"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 88
+        },
+        {
+          "name": "snprintf",
+          "params": [
+            "pString",
+            "length",
+            "pFormat"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "vsprintf",
+          "params": [
+            "pString",
+            "pFormat",
+            "ap"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "vfprintf",
+          "params": [
+            "pStream",
+            "pFormat",
+            "ap"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "vprintf",
+          "params": [
+            "pFormat",
+            "ap"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "fprintf",
+          "params": [
+            "pStream",
+            "pFormat"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "printf",
+          "params": [
+            "pFormat"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "sprintf",
+          "params": [
+            "pStr",
+            "pFormat"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "puts",
+          "params": [
+            "pStr"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "fputc",
+          "params": [
+            "c",
+            "pStream"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "fputs",
+          "params": [
+            "pStr",
+            "pStream"
+          ],
+          "returnType": "signed int",
+          "exported": true,
+          "lineCount": 16
+        }
+      ],
+      "classes": [
+        {
+          "name": "_reent",
+          "methods": [],
+          "properties": [],
+          "exported": true,
+          "lineCount": 1
+        }
+      ],
+      "imports": [
+        {
+          "source": "stdio.h",
+          "specifiers": [
+            "stdio.h"
+          ]
+        },
+        {
+          "source": "stdarg.h",
+          "specifiers": [
+            "stdarg.h"
+          ]
+        },
+        {
+          "source": "retarget.h",
+          "specifiers": [
+            "retarget.h"
+          ]
+        }
+      ],
+      "exports": [
+        "PrintChar",
+        "_reent",
+        "PutChar",
+        "PutString",
+        "PutUnsignedInt",
+        "PutSignedInt",
+        "PutHexa",
+        "vsnprintf",
+        "snprintf",
+        "vsprintf",
+        "vfprintf",
+        "vprintf",
+        "fprintf",
+        "printf",
+        "sprintf",
+        "puts",
+        "fputc",
+        "fputs"
+      ],
+      "totalLines": 561,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/source/retarget.c": {
+      "filePath": "vg015/device/source/retarget.c",
+      "contentHash": "b2b737a9a34352e661bd22ca35890c764b0fa97cbb95ef402f358281a8f695fd",
+      "functions": [
+        {
+          "name": "retarget_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 63
+        },
+        {
+          "name": "retarget_get_char",
+          "params": [],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "retarget_put_char",
+          "params": [
+            "ch"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "../Include/retarget.h",
+          "specifiers": [
+            "../Include/retarget.h"
+          ]
+        }
+      ],
+      "exports": [
+        "retarget_init",
+        "retarget_get_char",
+        "retarget_put_char"
+      ],
+      "totalLines": 107,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/source/riscv-irq.c": {
+      "filePath": "vg015/device/source/riscv-irq.c",
+      "contentHash": "2e357fd95ae7c0f3d1e45e97f6205d568ff9ee343adaa0ba96b59e0fed3f61d5",
+      "functions": [
+        {
+          "name": "riscv_irq_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "riscv_irq_enable",
+          "params": [
+            "irq_num"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "riscv_irq_disable",
+          "params": [
+            "irq_num"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "riscv_irq_set_handler",
+          "params": [
+            "irq_num",
+            "handler"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "riscv_irq_global_enable",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "riscv_irq_global_disable",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "irq_entry",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 43
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plic.h",
+          "specifiers": [
+            "plic.h"
+          ]
+        },
+        {
+          "source": "riscv-irq.h",
+          "specifiers": [
+            "riscv-irq.h"
+          ]
+        },
+        {
+          "source": "riscv-csr.h",
+          "specifiers": [
+            "riscv-csr.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        }
+      ],
+      "exports": [
+        "riscv_irq_init",
+        "riscv_irq_enable",
+        "riscv_irq_disable",
+        "riscv_irq_set_handler",
+        "riscv_irq_global_enable",
+        "riscv_irq_global_disable",
+        "irq_entry"
+      ],
+      "totalLines": 91,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/source/startup_k1921vg015.S": {
+      "filePath": "vg015/device/source/startup_k1921vg015.S",
+      "contentHash": "f12156367cad9f4e7159bce967e86e4e1a803b109a45aff6866a1edb9dd6df9d",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 270,
+      "hasStructuralAnalysis": false
+    },
+    "vg015/device/source/sys_init.c": {
+      "filePath": "vg015/device/source/sys_init.c",
+      "contentHash": "1bfbd2983f2ff3e6b6bf57e0e72cacf1e4bbc8a737d2a33d4c14a2ee920bc485",
+      "functions": [
+        {
+          "name": "plf_init_noreloc",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "plf_init_generic",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 25
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "sys/errno.h",
+          "specifiers": [
+            "sys/errno.h"
+          ]
+        },
+        {
+          "source": "string.h",
+          "specifiers": [
+            "string.h"
+          ]
+        },
+        {
+          "source": "unistd.h",
+          "specifiers": [
+            "unistd.h"
+          ]
+        },
+        {
+          "source": "memasm.h",
+          "specifiers": [
+            "memasm.h"
+          ]
+        }
+      ],
+      "exports": [
+        "plf_init_noreloc",
+        "plf_init_generic"
+      ],
+      "totalLines": 65,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/device/source/system_k1921vg015.c": {
+      "filePath": "vg015/device/source/system_k1921vg015.c",
+      "contentHash": "15ef1f92a69e2f74049a094eadc8bfdd5c52ff36ad4f30bd7a83a0bd377c206c",
+      "functions": [
+        {
+          "name": "SystemCoreClockUpdate",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 65
+        },
+        {
+          "name": "ClkInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 166
+        },
+        {
+          "name": "InterruptEnable",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 11
+        },
+        {
+          "name": "InterruptDisable",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "SystemInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "system_k1921vg015.h",
+          "specifiers": [
+            "system_k1921vg015.h"
+          ]
+        },
+        {
+          "source": "plic.h",
+          "specifiers": [
+            "plic.h"
+          ]
+        },
+        {
+          "source": "K1921VG015.h",
+          "specifiers": [
+            "K1921VG015.h"
+          ]
+        }
+      ],
+      "exports": [
+        "SystemCoreClockUpdate",
+        "ClkInit",
+        "InterruptEnable",
+        "InterruptDisable",
+        "SystemInit"
+      ],
+      "totalLines": 293,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/main.c": {
+      "filePath": "vg015/main.c",
+      "contentHash": "307f4a421b44c01325022025aa681223dfb551bef88a7c00a70882c30b88251a",
+      "functions": [
+        {
+          "name": "UART4_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "uart4_irq_handler",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 13
+        },
+        {
+          "name": "tmr32_irq_handler",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "gpio_irq_handler",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "tmr32_init_1ms",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 17
+        },
+        {
+          "name": "irq_init",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 28
+        },
+        {
+          "name": "periph_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "main",
+          "params": [],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "device/include/K1921VG015.h",
+          "specifiers": [
+            "device/include/K1921VG015.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "device/include/system_k1921vg015.h",
+          "specifiers": [
+            "device/include/system_k1921vg015.h"
+          ]
+        },
+        {
+          "source": "device/include/plic.h",
+          "specifiers": [
+            "device/include/plic.h"
+          ]
+        },
+        {
+          "source": "device/include/retarget.h",
+          "specifiers": [
+            "device/include/retarget.h"
+          ]
+        },
+        {
+          "source": "plib/inc/plib015_tmr32.h",
+          "specifiers": [
+            "plib/inc/plib015_tmr32.h"
+          ]
+        },
+        {
+          "source": "modules/osdp/osdp.h",
+          "specifiers": [
+            "modules/osdp/osdp.h"
+          ]
+        },
+        {
+          "source": "modules/timebase/timebase.h",
+          "specifiers": [
+            "modules/timebase/timebase.h"
+          ]
+        },
+        {
+          "source": "modules/wiegand/wiegand.h",
+          "specifiers": [
+            "modules/wiegand/wiegand.h"
+          ]
+        },
+        {
+          "source": "stdio.h",
+          "specifiers": [
+            "stdio.h"
+          ]
+        },
+        {
+          "source": "inttypes.h",
+          "specifiers": [
+            "inttypes.h"
+          ]
+        }
+      ],
+      "exports": [
+        "UART4_init",
+        "periph_init",
+        "main"
+      ],
+      "totalLines": 144,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/makefile": {
+      "filePath": "vg015/makefile",
+      "contentHash": "4bba5e9fb375b43060816f185803df647bf949f47a13e56fcdc42c1d9c1b9b26",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 141,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/adcsar/adcsar.c": {
+      "filePath": "vg015/modules/adcsar/adcsar.c",
+      "contentHash": "449bbd70b691981383ad138f844698588e605a0a72d248d778c1d5e55aa8708c",
+      "functions": [
+        {
+          "name": "classify_code_char",
+          "params": [
+            "code"
+          ],
+          "returnType": "char",
+          "exported": false,
+          "lineCount": 8
+        },
+        {
+          "name": "adcsar_classify_code",
+          "params": [
+            "code"
+          ],
+          "returnType": "char",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "state_from_char",
+          "params": [
+            "c"
+          ],
+          "returnType": "adcsar_state_t",
+          "exported": false,
+          "lineCount": 10
+        },
+        {
+          "name": "adcsar_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 47
+        },
+        {
+          "name": "adcsar_start",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "adcsar_poll",
+          "params": [
+            "out_sample"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 29
+        },
+        {
+          "name": "ADC_IRQHandler",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "adcsar.h",
+          "specifiers": [
+            "adcsar.h"
+          ]
+        },
+        {
+          "source": "../../plib/inc/plib015.h",
+          "specifiers": [
+            "../../plib/inc/plib015.h"
+          ]
+        },
+        {
+          "source": "../../device/Include/plic.h",
+          "specifiers": [
+            "../../device/Include/plic.h"
+          ]
+        }
+      ],
+      "exports": [
+        "adcsar_classify_code",
+        "adcsar_init",
+        "adcsar_start",
+        "adcsar_poll",
+        "ADC_IRQHandler"
+      ],
+      "totalLines": 124,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/adcsar/adcsar.h": {
+      "filePath": "vg015/modules/adcsar/adcsar.h",
+      "contentHash": "415a959bd33e6edbe6d73329a98df55a1c873ad5b7575b94305d74f5ffdddec9",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 35,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/adcsar/README.md": {
+      "filePath": "vg015/modules/adcsar/README.md",
+      "contentHash": "b57d41279cfd5e0fdc96908b20b95e712bbbc48f37ca6e4c000f718217b75e0c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 40,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/config/config.c": {
+      "filePath": "vg015/modules/config/config.c",
+      "contentHash": "bed72ed14a5382e80f17e4e737d3a18d60b079db18abb1a72cf771f820cec657",
+      "functions": [
+        {
+          "name": "config_crc32",
+          "params": [
+            "data",
+            "len"
+          ],
+          "returnType": "uint32_t",
+          "exported": false,
+          "lineCount": 13
+        },
+        {
+          "name": "config_is_valid_pdid",
+          "params": [
+            "pdid"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 14
+        },
+        {
+          "name": "config_is_valid_cap",
+          "params": [
+            "cap"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "config_apply_defaults_if_needed",
+          "params": [
+            "cfg"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 22
+        },
+        {
+          "name": "config_read_record",
+          "params": [
+            "rec"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 44
+        },
+        {
+          "name": "config_storage_default",
+          "params": [
+            "cfg"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "config_storage_load",
+          "params": [
+            "cfg"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "config_storage_save",
+          "params": [
+            "cfg_in"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 42
+        },
+        {
+          "name": "config_storage_get_seq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "config_storage_get_osdp_addr",
+          "params": [],
+          "returnType": "uint8_t",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "config_storage_get_osdp_baud",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "config_storage_reset",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 29
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "config.h",
+          "specifiers": [
+            "config.h"
+          ]
+        },
+        {
+          "source": "string.h",
+          "specifiers": [
+            "string.h"
+          ]
+        },
+        {
+          "source": "stddef.h",
+          "specifiers": [
+            "stddef.h"
+          ]
+        }
+      ],
+      "exports": [
+        "config_storage_default",
+        "config_storage_load",
+        "config_storage_save",
+        "config_storage_get_seq",
+        "config_storage_get_osdp_addr",
+        "config_storage_get_osdp_baud",
+        "config_storage_reset"
+      ],
+      "totalLines": 260,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/config/config.h": {
+      "filePath": "vg015/modules/config/config.h",
+      "contentHash": "e8f95c4e5b6c5ee1347bd251a11b54bf8408c2e3e0ddbcc17055bc4244815d87",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 88,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/config/README.md": {
+      "filePath": "vg015/modules/config/README.md",
+      "contentHash": "71d8c3c9e3c75eb30117eedb47f0efe80053d23b88fff202f5d7d86908aa54ac",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 57,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/driver/eeprom/eeprom.c": {
+      "filePath": "vg015/modules/driver/eeprom/eeprom.c",
+      "contentHash": "9fd44f0a15f8daa64b28c316e8a11de8044a72405a15ac73633a87c20a8ba0bd",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "eeprom.h",
+          "specifiers": [
+            "eeprom.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "../../../device/Include/K1921VG015.h",
+          "specifiers": [
+            "../../../device/Include/K1921VG015.h"
+          ]
+        },
+        {
+          "source": "../../../device/Include/plic.h",
+          "specifiers": [
+            "../../../device/Include/plic.h"
+          ]
+        },
+        {
+          "source": "../../../plib/inc/plib015_gpio.h",
+          "specifiers": [
+            "../../../plib/inc/plib015_gpio.h"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 682,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/driver/eeprom/eeprom.h": {
+      "filePath": "vg015/modules/driver/eeprom/eeprom.h",
+      "contentHash": "0d7e5cadbcc516db3f12a4370ea307f752c5b9558357bc057df3c79f74adec39",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 31,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/driver/README.md": {
+      "filePath": "vg015/modules/driver/README.md",
+      "contentHash": "d5fb7fc940ea1d5fc7c0bf5f1268b067e3a477ff2dca1b14d32d5fbef4fe034a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 71,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/driver/w25q32/extflash_w25q32.c": {
+      "filePath": "vg015/modules/driver/w25q32/extflash_w25q32.c",
+      "contentHash": "bceb020ff16133ea42157715da3b542bd92fea390c368aaf23e3dfd8bdadabda",
+      "functions": [
+        {
+          "name": "extflash_init_spi0_cs_pb1",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "spi0_init_for_extflash",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 27
+        },
+        {
+          "name": "gpio_init_spi_pins",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "extflash_cs_low",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "extflash_cs_high",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "extflash_spi_xfer",
+          "params": [
+            "byte"
+          ],
+          "returnType": "uint8_t",
+          "exported": false,
+          "lineCount": 10
+        },
+        {
+          "name": "extflash_write_enable",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "extflash_wait_ready",
+          "params": [
+            "timeout_ms"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "extflash_read",
+          "params": [
+            "addr",
+            "dst",
+            "len"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "extflash_erase_range_4k",
+          "params": [
+            "addr",
+            "len"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 20
+        },
+        {
+          "name": "extflash_write",
+          "params": [
+            "addr",
+            "src",
+            "len"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 34
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "extflash_w25q32.h",
+          "specifiers": [
+            "extflash_w25q32.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "../../../device/Include/K1921VG015.h",
+          "specifiers": [
+            "../../../device/Include/K1921VG015.h"
+          ]
+        },
+        {
+          "source": "../../../plib/inc/plib015_gpio.h",
+          "specifiers": [
+            "../../../plib/inc/plib015_gpio.h"
+          ]
+        }
+      ],
+      "exports": [
+        "extflash_init_spi0_cs_pb1",
+        "extflash_read",
+        "extflash_erase_range_4k",
+        "extflash_write"
+      ],
+      "totalLines": 214,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/driver/w25q32/extflash_w25q32.h": {
+      "filePath": "vg015/modules/driver/w25q32/extflash_w25q32.h",
+      "contentHash": "a738fb0ccded44a4d8e2a4f2dfb7a8870497f3044e81ad8f7aecc5ffee936ce0",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 27,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/driver/ws0010/ws0010_1602.c": {
+      "filePath": "vg015/modules/driver/ws0010/ws0010_1602.c",
+      "contentHash": "3c6bf613656db4c515774434cad32999ff98554c11673f768cfb059cb69c97c6",
+      "functions": [
+        {
+          "name": "delay_short",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "set_pin",
+          "params": [
+            "pin_mask",
+            "high"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 8
+        },
+        {
+          "name": "write4",
+          "params": [
+            "rs",
+            "nibble"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "write8",
+          "params": [
+            "rs",
+            "byte"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "cmd",
+          "params": [
+            "c"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "data",
+          "params": [
+            "d"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "ws0010_clear",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "ws0010_home",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ws0010_goto",
+          "params": [
+            "row",
+            "col"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "ws0010_putc",
+          "params": [
+            "c"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ws0010_print",
+          "params": [
+            "s"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "gpio_init_ws0010",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 22
+        },
+        {
+          "name": "ws0010_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 41
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "ws0010_1602.h",
+          "specifiers": [
+            "ws0010_1602.h"
+          ]
+        },
+        {
+          "source": "../../gpio/gpio_helpers.h",
+          "specifiers": [
+            "../../gpio/gpio_helpers.h"
+          ]
+        },
+        {
+          "source": "stddef.h",
+          "specifiers": [
+            "stddef.h"
+          ]
+        }
+      ],
+      "exports": [
+        "ws0010_clear",
+        "ws0010_home",
+        "ws0010_goto",
+        "ws0010_putc",
+        "ws0010_print",
+        "ws0010_init"
+      ],
+      "totalLines": 166,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/driver/ws0010/ws0010_1602.h": {
+      "filePath": "vg015/modules/driver/ws0010/ws0010_1602.h",
+      "contentHash": "1384ade612a7e7b30c6781eb647f0ea350f1f8b2d25085561c586c70de9dc4c7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/gpio/gpio_helpers.c": {
+      "filePath": "vg015/modules/gpio/gpio_helpers.c",
+      "contentHash": "14a621094c54dd5f00e70da77b034645688cab36698715c0ebc9612839729a8f",
+      "functions": [
+        {
+          "name": "gpio_reset_pin",
+          "params": [
+            "GPIOx",
+            "Pin"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "gpio_init_output",
+          "params": [
+            "GPIOx",
+            "Pin",
+            "initial_state"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "gpio_init_input",
+          "params": [
+            "GPIOx",
+            "Pin",
+            "pull_mode"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 28
+        },
+        {
+          "name": "gpio_init_input_irq",
+          "params": [
+            "GPIOx",
+            "Pin",
+            "pull_mode",
+            "last_state"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 19
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "gpio_helpers.h",
+          "specifiers": [
+            "gpio_helpers.h"
+          ]
+        },
+        {
+          "source": "stddef.h",
+          "specifiers": [
+            "stddef.h"
+          ]
+        }
+      ],
+      "exports": [
+        "gpio_reset_pin",
+        "gpio_init_output",
+        "gpio_init_input",
+        "gpio_init_input_irq"
+      ],
+      "totalLines": 101,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/gpio/gpio_helpers.h": {
+      "filePath": "vg015/modules/gpio/gpio_helpers.h",
+      "contentHash": "287044b2578f0cd78c693819dbf05c0902b8bbecc0b27e8d5920ad5988e7639a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/gpio/README.md": {
+      "filePath": "vg015/modules/gpio/README.md",
+      "contentHash": "fa4325c6bf9d5693a126398a42f4550947750b9b78ebec531329ea0a51f1d360",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 50,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/core/osdp_dispatch.c": {
+      "filePath": "vg015/modules/osdp/core/osdp_dispatch.c",
+      "contentHash": "9acfda8dbc78373a0336cec30f172e4e7b4e00ffe092c859ddd6af020a2ff79f",
+      "functions": [
+        {
+          "name": "osdp_dispatch_set_table",
+          "params": [
+            "table",
+            "count"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_dispatch.h",
+          "specifiers": [
+            "osdp_dispatch.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_dispatch_set_table"
+      ],
+      "totalLines": 25,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/core/osdp_dispatch.h": {
+      "filePath": "vg015/modules/osdp/core/osdp_dispatch.h",
+      "contentHash": "1c6ed0c799f76cf258012c67e356c7a81f79bc4bc17a15aef53dfd36bbbaa455",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 18,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/core/osdp_frame.c": {
+      "filePath": "vg015/modules/osdp/core/osdp_frame.c",
+      "contentHash": "673379b7ec7a96b56bf2a45170443eca2e7093b6874af54f0baaf7cb06d4560c",
+      "functions": [
+        {
+          "name": "osdp_frame_build_header",
+          "params": [
+            "tx",
+            "addr",
+            "dlen",
+            "seq"
+          ],
+          "returnType": "uint16_t",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "osdp_frame_append_crc",
+          "params": [
+            "tx",
+            "len_without_crc"
+          ],
+          "returnType": "uint16_t",
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_frame.h",
+          "specifiers": [
+            "osdp_frame.h"
+          ]
+        },
+        {
+          "source": "../crc/ccitt_crc16.h",
+          "specifiers": [
+            "../crc/ccitt_crc16.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_frame_build_header",
+        "osdp_frame_append_crc"
+      ],
+      "totalLines": 22,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/core/osdp_frame.h": {
+      "filePath": "vg015/modules/osdp/core/osdp_frame.h",
+      "contentHash": "244a7151d06fb45968c36f7fed019c4a14715948fccf905598223f34b4a1d30e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 13,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/core/osdp_parser.c": {
+      "filePath": "vg015/modules/osdp/core/osdp_parser.c",
+      "contentHash": "6f834f7fbde6d98df035069cfa60999c175fd6baeaf985668caf5240891b20a5",
+      "functions": [
+        {
+          "name": "osdp_parser_reset",
+          "params": [
+            "ctx"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "osdp_parser_on_byte",
+          "params": [
+            "ctx",
+            "byte",
+            "cb"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 42
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_parser.h",
+          "specifiers": [
+            "osdp_parser.h"
+          ]
+        },
+        {
+          "source": "osdp_frame.h",
+          "specifiers": [
+            "osdp_frame.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_parser_reset",
+        "osdp_parser_on_byte"
+      ],
+      "totalLines": 53,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/core/osdp_parser.h": {
+      "filePath": "vg015/modules/osdp/core/osdp_parser.h",
+      "contentHash": "a8e389f605a64c942b2e0e98c70ba8f4507b387531d8e2a8a6c2f719a10411cc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 13,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/crc/ccitt_crc16.c": {
+      "filePath": "vg015/modules/osdp/crc/ccitt_crc16.c",
+      "contentHash": "46270bb69ea1414b46ab47f6f3c37e1157828b3464bc0c188af89d0a57830750",
+      "functions": [
+        {
+          "name": "ccitt_crc16_update",
+          "params": [
+            "crc",
+            "byte"
+          ],
+          "returnType": "uint16_t",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ccitt_crc16_calc",
+          "params": [
+            "initcrc",
+            "data",
+            "len"
+          ],
+          "returnType": "uint16_t",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "osdp_crc_is_ok",
+          "params": [
+            "data",
+            "len"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "ccitt_crc16.h",
+          "specifiers": [
+            "ccitt_crc16.h"
+          ]
+        }
+      ],
+      "exports": [
+        "ccitt_crc16_update",
+        "ccitt_crc16_calc",
+        "osdp_crc_is_ok"
+      ],
+      "totalLines": 62,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/crc/ccitt_crc16.h": {
+      "filePath": "vg015/modules/osdp/crc/ccitt_crc16.h",
+      "contentHash": "a8b26ab18d4d32e94c51d18977a77bcc380f64a3de07d809e641a59f9f378135",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 15,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/executor/osdp_executor.c": {
+      "filePath": "vg015/modules/osdp/executor/osdp_executor.c",
+      "contentHash": "b0ef79d37037ca36ac5621eb314c21db7b386750be7c38e56e3a6db97dae6cf7",
+      "functions": [
+        {
+          "name": "osdp_executor_apply",
+          "params": [
+            "intent"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_executor.h",
+          "specifiers": [
+            "osdp_executor.h"
+          ]
+        },
+        {
+          "source": "../port/osdp_port.h",
+          "specifiers": [
+            "../port/osdp_port.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_executor_apply"
+      ],
+      "totalLines": 16,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/executor/osdp_executor.h": {
+      "filePath": "vg015/modules/osdp/executor/osdp_executor.h",
+      "contentHash": "d49b0b5109918a30eb58ac81226f39d1a5f66bffe2a36a04c4f85d659ef2ddd5",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 20,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/handlers/osdp_cmd_admin.c": {
+      "filePath": "vg015/modules/osdp/handlers/osdp_cmd_admin.c",
+      "contentHash": "372a6e17b8e02ceff016a3d63c06582499b7b37edf38bd1364caaf0448a2801b",
+      "functions": [
+        {
+          "name": "osdp_handle_cmd_admin",
+          "params": [
+            "cmd",
+            "seq",
+            "data",
+            "data_len",
+            "should_reply"
+          ],
+          "returnType": "osdp_intent_t",
+          "exported": true,
+          "lineCount": 43
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_handlers.h",
+          "specifiers": [
+            "osdp_handlers.h"
+          ]
+        },
+        {
+          "source": "../osdp.h",
+          "specifiers": [
+            "../osdp.h"
+          ]
+        },
+        {
+          "source": "../policy/osdp_policy.h",
+          "specifiers": [
+            "../policy/osdp_policy.h"
+          ]
+        },
+        {
+          "source": "osdp_internal_api.h",
+          "specifiers": [
+            "osdp_internal_api.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_handle_cmd_admin"
+      ],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/handlers/osdp_cmd_basic.c": {
+      "filePath": "vg015/modules/osdp/handlers/osdp_cmd_basic.c",
+      "contentHash": "5cbaf18ba71b41c0cd7ebebd75d84464d7683daf241cc0cf626ccff7411a339d",
+      "functions": [
+        {
+          "name": "osdp_handle_cmd_basic",
+          "params": [
+            "cmd",
+            "seq",
+            "data",
+            "data_len",
+            "should_reply"
+          ],
+          "returnType": "osdp_intent_t",
+          "exported": true,
+          "lineCount": 31
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_handlers.h",
+          "specifiers": [
+            "osdp_handlers.h"
+          ]
+        },
+        {
+          "source": "../osdp.h",
+          "specifiers": [
+            "../osdp.h"
+          ]
+        },
+        {
+          "source": "osdp_internal_api.h",
+          "specifiers": [
+            "osdp_internal_api.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_handle_cmd_basic"
+      ],
+      "totalLines": 36,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/handlers/osdp_cmd_control.c": {
+      "filePath": "vg015/modules/osdp/handlers/osdp_cmd_control.c",
+      "contentHash": "e7d9cfc68e338e7b92ddb041ee1ee936916e703a66804f096fff775d36dff904",
+      "functions": [
+        {
+          "name": "osdp_handle_cmd_control",
+          "params": [
+            "cmd",
+            "seq",
+            "data",
+            "data_len",
+            "should_reply"
+          ],
+          "returnType": "osdp_intent_t",
+          "exported": true,
+          "lineCount": 33
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_handlers.h",
+          "specifiers": [
+            "osdp_handlers.h"
+          ]
+        },
+        {
+          "source": "../osdp.h",
+          "specifiers": [
+            "../osdp.h"
+          ]
+        },
+        {
+          "source": "osdp_internal_api.h",
+          "specifiers": [
+            "osdp_internal_api.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_handle_cmd_control"
+      ],
+      "totalLines": 38,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/handlers/osdp_cmd_filetransfer.c": {
+      "filePath": "vg015/modules/osdp/handlers/osdp_cmd_filetransfer.c",
+      "contentHash": "53dc4fe62badb983ab9922deda22885c79aa68cecdec792207381815d5e08308",
+      "functions": [
+        {
+          "name": "osdp_handle_cmd_filetransfer",
+          "params": [
+            "cmd",
+            "seq",
+            "data",
+            "data_len",
+            "should_reply"
+          ],
+          "returnType": "osdp_intent_t",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_handlers.h",
+          "specifiers": [
+            "osdp_handlers.h"
+          ]
+        },
+        {
+          "source": "osdp_internal_api.h",
+          "specifiers": [
+            "osdp_internal_api.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_handle_cmd_filetransfer"
+      ],
+      "totalLines": 13,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/handlers/osdp_handlers.h": {
+      "filePath": "vg015/modules/osdp/handlers/osdp_handlers.h",
+      "contentHash": "a84277684595e61553442fa8eeab6b5f51a7634f907addff487cad59aed39326",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 13,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/handlers/osdp_internal_api.h": {
+      "filePath": "vg015/modules/osdp/handlers/osdp_internal_api.h",
+      "contentHash": "41774f5bbcea7479ba0a3046204f8b15ea9cd8a13755d64ccf76ca1c7ea88c09",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/osdp.c": {
+      "filePath": "vg015/modules/osdp/osdp.c",
+      "contentHash": "901bd0c5aca099dd2cb3a56d6d821e9125a032333dc640db509169b60956e1ab",
+      "functions": [
+        {
+          "name": "osdp_on_frame_received",
+          "params": [
+            "ctx",
+            "frame",
+            "frame_len"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 27
+        },
+        {
+          "name": "osdp_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "osdp_on_rx_byte",
+          "params": [
+            "byte"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_tick_1ms",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "osdp.h",
+          "specifiers": [
+            "osdp.h"
+          ]
+        },
+        {
+          "source": "crc/ccitt_crc16.h",
+          "specifiers": [
+            "crc/ccitt_crc16.h"
+          ]
+        },
+        {
+          "source": "core/osdp_parser.h",
+          "specifiers": [
+            "core/osdp_parser.h"
+          ]
+        },
+        {
+          "source": "core/osdp_dispatch.h",
+          "specifiers": [
+            "core/osdp_dispatch.h"
+          ]
+        },
+        {
+          "source": "executor/osdp_executor.h",
+          "specifiers": [
+            "executor/osdp_executor.h"
+          ]
+        },
+        {
+          "source": "handlers/osdp_handlers.h",
+          "specifiers": [
+            "handlers/osdp_handlers.h"
+          ]
+        },
+        {
+          "source": "handlers/osdp_internal_api.h",
+          "specifiers": [
+            "handlers/osdp_internal_api.h"
+          ]
+        },
+        {
+          "source": "osdp_runtime.h",
+          "specifiers": [
+            "osdp_runtime.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_init",
+        "osdp_on_rx_byte",
+        "osdp_tick_1ms"
+      ],
+      "totalLines": 70,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/osdp.h": {
+      "filePath": "vg015/modules/osdp/osdp.h",
+      "contentHash": "9dfc7f3169a7684a19a109a275cc01059642996348528077111c146831b46e53",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 49,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/policy/osdp_policy.c": {
+      "filePath": "vg015/modules/osdp/policy/osdp_policy.c",
+      "contentHash": "d522d501746b9b7b849fd030c7d2d861c9b3cca17eaab2bb46206676021401f4",
+      "functions": [
+        {
+          "name": "osdp_policy_is_valid_addr",
+          "params": [
+            "addr"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_policy_is_valid_baud",
+          "params": [
+            "baud"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_policy_normalize_addr",
+          "params": [
+            "addr"
+          ],
+          "returnType": "uint8_t",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_policy_normalize_baud",
+          "params": [
+            "baud"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_policy.h",
+          "specifiers": [
+            "osdp_policy.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_policy_is_valid_addr",
+        "osdp_policy_is_valid_baud",
+        "osdp_policy_normalize_addr",
+        "osdp_policy_normalize_baud"
+      ],
+      "totalLines": 22,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/policy/osdp_policy.h": {
+      "filePath": "vg015/modules/osdp/policy/osdp_policy.h",
+      "contentHash": "aad38119fa578f781d2cc7268ea4e4be87ef804e10c32fbbf63ebf76f041270e",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 19,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/port/osdp_port_hw.c": {
+      "filePath": "vg015/modules/osdp/port/osdp_port_hw.c",
+      "contentHash": "31eb460903645102af480eb2e7c13af29fe1f9a679330882a276d6160afd7afb",
+      "functions": [
+        {
+          "name": "osdp_port_send_blocking",
+          "params": [
+            "data",
+            "len"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "osdp_port_set_uart_baud",
+          "params": [
+            "baud"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "osdp_port_delay_ms",
+          "params": [
+            "delay_ms"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "osdp_port_do_reset",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "osdp_port_update_led_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "osdp_port_update_led_set",
+          "params": [
+            "on"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "osdp_port_update_flag_is_pending",
+          "params": [],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "osdp_port_extflash_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_port_read_input",
+          "params": [
+            "idx"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "osdp_port_read_output",
+          "params": [
+            "idx"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "osdp_port_set_output",
+          "params": [
+            "idx",
+            "on"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "osdp_port_extflash_erase_range_4k",
+          "params": [
+            "base",
+            "size"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_port_extflash_write",
+          "params": [
+            "addr",
+            "data",
+            "len"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_port_extflash_read",
+          "params": [
+            "addr",
+            "data",
+            "len"
+          ],
+          "returnType": "bool",
+          "exported": true,
+          "lineCount": 4
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "osdp_port.h",
+          "specifiers": [
+            "osdp_port.h"
+          ]
+        },
+        {
+          "source": "../../../device/Include/K1921VG015.h",
+          "specifiers": [
+            "../../../device/Include/K1921VG015.h"
+          ]
+        },
+        {
+          "source": "../../../device/include/system_k1921vg015.h",
+          "specifiers": [
+            "../../../device/include/system_k1921vg015.h"
+          ]
+        },
+        {
+          "source": "../../../device/Include/retarget.h",
+          "specifiers": [
+            "../../../device/Include/retarget.h"
+          ]
+        },
+        {
+          "source": "../../../plib/inc/plib015_gpio.h",
+          "specifiers": [
+            "../../../plib/inc/plib015_gpio.h"
+          ]
+        },
+        {
+          "source": "../../driver/w25q32/extflash_w25q32.h",
+          "specifiers": [
+            "../../driver/w25q32/extflash_w25q32.h"
+          ]
+        },
+        {
+          "source": "../../update/update_flag.h",
+          "specifiers": [
+            "../../update/update_flag.h"
+          ]
+        },
+        {
+          "source": "../../timebase/timebase.h",
+          "specifiers": [
+            "../../timebase/timebase.h"
+          ]
+        }
+      ],
+      "exports": [
+        "osdp_port_send_blocking",
+        "osdp_port_set_uart_baud",
+        "osdp_port_delay_ms",
+        "osdp_port_do_reset",
+        "osdp_port_update_led_init",
+        "osdp_port_update_led_set",
+        "osdp_port_update_flag_is_pending",
+        "osdp_port_extflash_init",
+        "osdp_port_read_input",
+        "osdp_port_read_output",
+        "osdp_port_set_output",
+        "osdp_port_extflash_erase_range_4k",
+        "osdp_port_extflash_write",
+        "osdp_port_extflash_read"
+      ],
+      "totalLines": 100,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/port/osdp_port.h": {
+      "filePath": "vg015/modules/osdp/port/osdp_port.h",
+      "contentHash": "f80539d83c2777d122dc812762e39b1acf9a6927318df2c58ec3434715a67da2",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 23,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/README.md": {
+      "filePath": "vg015/modules/osdp/README.md",
+      "contentHash": "f85bd7990749c5b1391864e4532746ff86120e185896d4d8946fc50ad8f205ab",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 44,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/runtime/osdp_runtime.c": {
+      "filePath": "vg015/modules/osdp/runtime/osdp_runtime.c",
+      "contentHash": "49080858966117f74ddeca412764377f08069bafbed296a809aa3f450e093899",
+      "functions": [
+        {
+          "name": "osdp_le_u16",
+          "params": [
+            "p"
+          ],
+          "returnType": "uint16_t",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_le_u32",
+          "params": [
+            "p"
+          ],
+          "returnType": "uint32_t",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "osdp_build_header",
+          "params": [
+            "tx",
+            "dlen",
+            "seq"
+          ],
+          "returnType": "uint16_t",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_build_crc_and_send",
+          "params": [
+            "tx",
+            "dlen"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "osdp_build_and_send_raw",
+          "params": [
+            "seq",
+            "event"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 21
+        },
+        {
+          "name": "set_led_state",
+          "params": [
+            "on"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "update_flag_led_init",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "update_flag_led_set",
+          "params": [
+            "on"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_load_addr_baud",
+          "params": [],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 9
+        },
+        {
+          "name": "set_uart_baud",
+          "params": [
+            "baud"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_build_and_send_ack",
+          "params": [
+            "seq"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "osdp_build_and_send_nak",
+          "params": [
+            "seq",
+            "reason"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "osdp_build_and_send_pdid",
+          "params": [
+            "seq"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "osdp_build_and_send_pdcap",
+          "params": [
+            "seq"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "osdp_build_and_send_com",
+          "params": [
+            "seq",
+            "new_addr",
+            "new_baud"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "osdp_build_and_send_istat",
+          "params": [
+            "seq"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "osdp_build_and_send_ostat",
+          "params": [
+            "seq"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "osdp_apply_comset",
+          "params": [
+            "new_addr",
+            "new_baud"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "osdp_apply_factory_reset",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "osdp_get_baud",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_enqueue_raw_card",
+          "params": [
+            "reader_no",
+            "bit_count",
+            "data",
+            "data_len"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "osdp_try_send_queued_event",
+          "params": [
+            "seq"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 23
+        },
+        {
+          "name": "osdp_runtime_addr",
+          "params": [],
+          "returnType": "uint8_t",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_validate_out_payload",
+          "params": [
+            "data",
+            "data_len"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "osdp_handle_out",
+          "params": [
+            "data",
+            "data_len"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 78
+        },
+        {
+          "name": "osdp_validate_led_payload",
+          "params": [
+            "data",
+            "data_len"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "osdp_handle_led",
+          "params": [
+            "data",
+            "data_len"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 104
+        },
+        {
+          "name": "osdp_vendor_is_prs",
+          "params": [
+            "v"
+          ],
+          "returnType": "int",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "osdp_handle_mfg",
+          "params": [
+            "data",
+            "data_len"
+          ],
+          "returnType": "osdp_mfg_result_t",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "app_flash_wait_ready",
+          "params": [
+            "loops"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 10
+        },
+        {
+          "name": "app_flash_offs",
+          "params": [
+            "abs_addr"
+          ],
+          "returnType": "uint32_t",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "app_flash_erase_page",
+          "params": [
+            "abs_addr"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 6
+        },
+        {
+          "name": "app_flash_write16",
+          "params": [
+            "abs_addr",
+            "data16"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 25
+        },
+        {
+          "name": "app_shared_flag_set_pending",
+          "params": [
+            "slot_base",
+            "total_size",
+            "hdr"
+          ],
+          "returnType": "bool",
+          "exported": false,
+          "lineCount": 34
+        },
+        {
+          "name": "osdp_build_and_send_ftstat",
+          "params": [
+            "seq",
+            "status_detail"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 17
+        },
+        {
+          "name": "osdp_handle_filetransfer",
+          "params": [
+            "seq",
+            "data",
+            "data_len"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 84
+        },
+        {
+          "name": "osdp_runtime_tick_1ms",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 55
+        },
+        {
+          "name": "osdp_runtime_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 28
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "stdbool.h",
+          "specifiers": [
+            "stdbool.h"
+          ]
+        },
+        {
+          "source": "stdint.h",
+          "specifiers": [
+            "stdint.h"
+          ]
+        },
+        {
+          "source": "string.h",
+          "specifiers": [
+            "string.h"
+          ]
+        },
+        {
+          "source": "../osdp.h",
+          "specifiers": [
+            "../osdp.h"
+          ]
+        },
+        {
+          "source": "osdp_runtime.h",
+          "specifiers": [
+            "osdp_runtime.h"
+          ]
+        },
+        {
+          "source": "../core/osdp_frame.h",
+          "specifiers": [
+            "../core/osdp_frame.h"
+          ]
+        },
+        {
+          "source": "../handlers/osdp_internal_api.h",
+          "specifiers": [
+            "../handlers/osdp_internal_api.h"
+          ]
+        },
+        {
+          "source": "../policy/osdp_policy.h",
+          "specifiers": [
+            "../policy/osdp_policy.h"
+          ]
+        },
+        {
+          "source": "../port/osdp_port.h",
+          "specifiers": [
+            "../port/osdp_port.h"
+          ]
+        },
+        {
+          "source": "../state/osdp_context.h",
+          "specifiers": [
+            "../state/osdp_context.h"
+          ]
+        },
+        {
+          "source": "../../../device/include/K1921VG015.h",
+          "specifiers": [
+            "../../../device/include/K1921VG015.h"
+          ]
+        },
+        {
+          "source": "../../../device/include/system_k1921vg015.h",
+          "specifiers": [
+            "../../../device/include/system_k1921vg015.h"
+          ]
+        },
+        {
+          "source": "../../config/config.h",
+          "specifiers": [
+            "../../config/config.h"
+          ]
+        },
+        {
+          "source": "../../driver/w25q32/extflash_w25q32.h",
+          "specifiers": [
+            "../../driver/w25q32/extflash_w25q32.h"
+          ]
+        },
+        {
+          "source": "../../update/update_flag.h",
+          "specifiers": [
+            "../../update/update_flag.h"
+          ]
+        }
+      ],
+      "exports": [
+        "set_uart_baud",
+        "osdp_build_and_send_ack",
+        "osdp_build_and_send_nak",
+        "osdp_build_and_send_pdid",
+        "osdp_build_and_send_pdcap",
+        "osdp_build_and_send_com",
+        "osdp_build_and_send_istat",
+        "osdp_build_and_send_ostat",
+        "osdp_apply_comset",
+        "osdp_apply_factory_reset",
+        "osdp_get_baud",
+        "osdp_enqueue_raw_card",
+        "osdp_try_send_queued_event",
+        "osdp_runtime_addr",
+        "osdp_validate_out_payload",
+        "osdp_handle_out",
+        "osdp_validate_led_payload",
+        "osdp_handle_led",
+        "osdp_vendor_is_prs",
+        "osdp_handle_mfg",
+        "osdp_handle_filetransfer",
+        "osdp_runtime_tick_1ms",
+        "osdp_runtime_init"
+      ],
+      "totalLines": 818,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/runtime/osdp_runtime.h": {
+      "filePath": "vg015/modules/osdp/runtime/osdp_runtime.h",
+      "contentHash": "4ca5d28c604e2b16153cc8a12ab47c73bfa0cf63463a15b3bb77a12595e01bef",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/osdp/state/osdp_context.h": {
+      "filePath": "vg015/modules/osdp/state/osdp_context.h",
+      "contentHash": "1dcc9911c688d485838b736f836479c3390c5bfd25631af9503eb6b0d92b9e49",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 78,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/timebase/timebase.c": {
+      "filePath": "vg015/modules/timebase/timebase.c",
+      "contentHash": "1d34960dd5e0871af68a80a28e45c9d060853fec3829279206b6c680c478f076",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "timebase.h",
+          "specifiers": [
+            "timebase.h"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 4,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/timebase/timebase.h": {
+      "filePath": "vg015/modules/timebase/timebase.h",
+      "contentHash": "b69e53ec844e4b2fee786653f2af4001dcfc731b97991856ab642e28bae5f090",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 10,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/update/update_flag.h": {
+      "filePath": "vg015/modules/update/update_flag.h",
+      "contentHash": "31148f08489688c5be924adb953532a1dbea01149f843a8c1d38bf8f17b8d54f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 37,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/wiegand/wiegand.c": {
+      "filePath": "vg015/modules/wiegand/wiegand.c",
+      "contentHash": "46c6b43ea9bc48c0a894ab607d9024394aecda31f1715906de70c9b3f164e279",
+      "functions": [
+        {
+          "name": "wiegand_is_supported_length",
+          "params": [
+            "bits"
+          ],
+          "returnType": "uint8_t",
+          "exported": false,
+          "lineCount": 14
+        },
+        {
+          "name": "wiegand_reset_reader",
+          "params": [
+            "reader"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "wiegand_push_reader_frame",
+          "params": [
+            "reader"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 27
+        },
+        {
+          "name": "wiegand_on_bit",
+          "params": [
+            "reader",
+            "bit_value",
+            "now_ms"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 21
+        },
+        {
+          "name": "wiegand_init",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 33
+        },
+        {
+          "name": "wiegand_gpio_irq_handler",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "wiegand_tick_1ms",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 19
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "wiegand.h",
+          "specifiers": [
+            "wiegand.h"
+          ]
+        },
+        {
+          "source": "../../device/include/K1921VG015.h",
+          "specifiers": [
+            "../../device/include/K1921VG015.h"
+          ]
+        },
+        {
+          "source": "../../plib/inc/plib015_gpio.h",
+          "specifiers": [
+            "../../plib/inc/plib015_gpio.h"
+          ]
+        },
+        {
+          "source": "../osdp/osdp.h",
+          "specifiers": [
+            "../osdp/osdp.h"
+          ]
+        },
+        {
+          "source": "../timebase/timebase.h",
+          "specifiers": [
+            "../timebase/timebase.h"
+          ]
+        }
+      ],
+      "exports": [
+        "wiegand_init",
+        "wiegand_gpio_irq_handler",
+        "wiegand_tick_1ms"
+      ],
+      "totalLines": 311,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/modules/wiegand/wiegand.h": {
+      "filePath": "vg015/modules/wiegand/wiegand.h",
+      "contentHash": "41a99e079f3727fcc368ccde98b73171e68184972c0a0990f3bd208c25ea35cf",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 11,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/K1921VG015.h": {
+      "filePath": "vg015/plib/inc/K1921VG015.h",
+      "contentHash": "437fa537b4d6c817c61b9ad80030775837949290abe16292a3e796a453717a62",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_adcsar.h": {
+      "filePath": "vg015/plib/inc/plib015_adcsar.h",
+      "contentHash": "90e563363678011f23983131e92678a6040a8382f86d7d7ac582c7b2b42d2322",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1264,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_adcsd.h": {
+      "filePath": "vg015/plib/inc/plib015_adcsd.h",
+      "contentHash": "6c667c10fdc9bd3432bad230ace3492ff6b11bc6b2b29fa33bf72705b452ef07",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 466,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_assert.h": {
+      "filePath": "vg015/plib/inc/plib015_assert.h",
+      "contentHash": "02f6f187f20642a704ac2d2bcad392f9138ec4c6bc1e886be90bf943703e32b7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 58,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_cmp.h": {
+      "filePath": "vg015/plib/inc/plib015_cmp.h",
+      "contentHash": "074dd918141c44c57500ed690c977cbeabf6c487e6f7299362fbc4c3f5584357",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 322,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_conf.h": {
+      "filePath": "vg015/plib/inc/plib015_conf.h",
+      "contentHash": "a7761cd37d29c36dbbc039129989300ea3dcf82f6264bb12d337a93018a18670",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_crc.h": {
+      "filePath": "vg015/plib/inc/plib015_crc.h",
+      "contentHash": "29776dad16481980785d6dc834a88ee3d2cbe9a82994f533a0c3b62cf82f2b39",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 336,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_crypto.h": {
+      "filePath": "vg015/plib/inc/plib015_crypto.h",
+      "contentHash": "596131f191c56b7a874b134f68a57d78d617cea0c068fed42c62bdbd7cd44c90",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 553,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_dma.h": {
+      "filePath": "vg015/plib/inc/plib015_dma.h",
+      "contentHash": "901279e4687f5c777ca632078f51b70fadb32e3402bd05a5d56f5b7ad32dc1c4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 603,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_flash.h": {
+      "filePath": "vg015/plib/inc/plib015_flash.h",
+      "contentHash": "728c8c8a5cd5bedd4af788bed988c85307980dbfdacec79b140aa4dc04f51c43",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 207,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_gpio.h": {
+      "filePath": "vg015/plib/inc/plib015_gpio.h",
+      "contentHash": "763b347ccadbb94db187eaba809a42940e9deac88f922ca77f53b273083a996b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 780,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_hash.h": {
+      "filePath": "vg015/plib/inc/plib015_hash.h",
+      "contentHash": "bcd59ce3773d82d7b6135b0c3cc993d76b711ff426155c6c644c6d1ca8eede24",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 415,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_i2c.h": {
+      "filePath": "vg015/plib/inc/plib015_i2c.h",
+      "contentHash": "57071accd1bd1885c39e0f95a424258f3bd4e856f48486ce02aeda2a9cbf6e0a",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 550,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_iwdt.h": {
+      "filePath": "vg015/plib/inc/plib015_iwdt.h",
+      "contentHash": "79dced12b47c4ff220d9a31d1c7b13ffad9a24f9b7a7e94429de138de8a451d7",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 192,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_qspi.h": {
+      "filePath": "vg015/plib/inc/plib015_qspi.h",
+      "contentHash": "f3b4c01135274de311e926f7cc89a705bbdb4c26c7cd4eca483423ccf9a30169",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 757,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_rcu.h": {
+      "filePath": "vg015/plib/inc/plib015_rcu.h",
+      "contentHash": "434e969503d7eb392484480b178577a84e2901b2aacd268b2c63d9fdfa071284",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1039,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_rtc.h": {
+      "filePath": "vg015/plib/inc/plib015_rtc.h",
+      "contentHash": "6727d923bc9c111ef1f4c2de3442701e48ecd5c0094d569a2b0a32ca1c9372b4",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 214,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_spi.h": {
+      "filePath": "vg015/plib/inc/plib015_spi.h",
+      "contentHash": "fdeedc8b4b23412a65ef0affd2e7dcccc09a0704f1808b58b3723eff7942640f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 529,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_tmr.h": {
+      "filePath": "vg015/plib/inc/plib015_tmr.h",
+      "contentHash": "77589f91978b2da7208bd69c58b7410a6bdaf7c9873f5b9c10bb2444afd206dc",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 551,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_tmr32.h": {
+      "filePath": "vg015/plib/inc/plib015_tmr32.h",
+      "contentHash": "2124d2548a9a11f79f3a3ab2b94ca1916542396aaca36adec8cfeef0a6df8c1f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 505,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_trng.h": {
+      "filePath": "vg015/plib/inc/plib015_trng.h",
+      "contentHash": "6a667f9e83baa692653cf77e41f87863b2b11a6a7fe2f039ae0c5ee714a543af",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 1013,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_tsens.h": {
+      "filePath": "vg015/plib/inc/plib015_tsens.h",
+      "contentHash": "71e9bef16699701df69c2078e0b4ed540c1b42ebc032bb3a68c37f0119b57b6c",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 103,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_uart.h": {
+      "filePath": "vg015/plib/inc/plib015_uart.h",
+      "contentHash": "8f08723a22506190db6fbfbded77a82a5d753f952ad86aea42e00aeff53f8ddd",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 692,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_version.h": {
+      "filePath": "vg015/plib/inc/plib015_version.h",
+      "contentHash": "40a6fa3db3675372079cf9ec057d7d64de2adeb6e2e41e6cbc0fca99b2cd2f17",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 45,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015_wdt.h": {
+      "filePath": "vg015/plib/inc/plib015_wdt.h",
+      "contentHash": "7bfff792923122df5bfa4a5803475eeecc56a6e6a34206923d7de9f633492054",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 192,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/inc/plib015.h": {
+      "filePath": "vg015/plib/inc/plib015.h",
+      "contentHash": "24ea222fd6efcb1d208239f39bda067bc7e1012c05279fd94af01df9ab1a8d4b",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 146,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/README.md": {
+      "filePath": "vg015/plib/README.md",
+      "contentHash": "eccca9ce488a8116a834e83e314feb9f37e34344f2861829eec86bb2ea68b972",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 89,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/RELEASE.md": {
+      "filePath": "vg015/plib/RELEASE.md",
+      "contentHash": "82367b7410605a09a24a68eda98087c631c4941e1ae2c1188b7c88c6b9dec7d8",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 34,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_adcsar.c": {
+      "filePath": "vg015/plib/src/plib015_adcsar.c",
+      "contentHash": "ff6b086daada76a3d28982af264800e68b8539354e34d2c08dd78785a8fa1f8b",
+      "functions": [
+        {
+          "name": "ADCSAR_SEQ_ReqConfig",
+          "params": [
+            "SEQ_Num",
+            "ReqNum",
+            "Channel_Num"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "ADCSAR_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ADCSAR_SEQ_Init",
+          "params": [
+            "SEQ_Num",
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "ADCSAR_SEQ_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 19
+        },
+        {
+          "name": "ADCSAR_DC_Init",
+          "params": [
+            "DC_Num",
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "ADCSAR_DC_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_adcsar.h",
+          "specifiers": [
+            "plib015_adcsar.h"
+          ]
+        }
+      ],
+      "exports": [
+        "ADCSAR_SEQ_ReqConfig",
+        "ADCSAR_DeInit",
+        "ADCSAR_SEQ_Init",
+        "ADCSAR_SEQ_StructInit",
+        "ADCSAR_DC_Init",
+        "ADCSAR_DC_StructInit"
+      ],
+      "totalLines": 188,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_adcsd.c": {
+      "filePath": "vg015/plib/src/plib015_adcsd.c",
+      "contentHash": "4e4437b183027404c8dcebd191b1a54ffbe7953f3928a1dbe9615c942fb908b9",
+      "functions": [
+        {
+          "name": "ADCSD_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ADCSD_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "ADCSD_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "ADCSD_CH_Init",
+          "params": [
+            "ch_num",
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "ADCSD_CH_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_adcsd.h",
+          "specifiers": [
+            "plib015_adcsd.h"
+          ]
+        }
+      ],
+      "exports": [
+        "ADCSD_DeInit",
+        "ADCSD_Init",
+        "ADCSD_StructInit",
+        "ADCSD_CH_Init",
+        "ADCSD_CH_StructInit"
+      ],
+      "totalLines": 131,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_crc.c": {
+      "filePath": "vg015/plib/src/plib015_crc.c",
+      "contentHash": "536da2232ffe1aa73ed86c2a6b0734484a3bc93b79b54cfc2aafcabab3a93b97",
+      "functions": [
+        {
+          "name": "CRC_DeInit",
+          "params": [
+            "CRCx"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "CRC_Init",
+          "params": [
+            "CRCx",
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "CRC_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_crc.h",
+          "specifiers": [
+            "plib015_crc.h"
+          ]
+        }
+      ],
+      "exports": [
+        "CRC_DeInit",
+        "CRC_Init",
+        "CRC_StructInit"
+      ],
+      "totalLines": 122,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_crypto.c": {
+      "filePath": "vg015/plib/src/plib015_crypto.c",
+      "contentHash": "f5db48d64bc9e1d5eaed0307135b1bf21ce436a770678d69b0b63f265cca10aa",
+      "functions": [
+        {
+          "name": "CRYPTO_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "CRYPTO_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "CRYPTO_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "CRYPTO_DMAStructInit",
+          "params": [
+            "DMAStruct",
+            "CryptoStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "CRYPTO_InitDMADescriptor",
+          "params": [
+            "DMAStruct"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 35
+        },
+        {
+          "name": "CRPYTO_ProcessData",
+          "params": [
+            "DMAStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "CRYPTO_SetKey",
+          "params": [
+            "key",
+            "len"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_crypto.h",
+          "specifiers": [
+            "plib015_crypto.h"
+          ]
+        }
+      ],
+      "exports": [
+        "CRYPTO_DeInit",
+        "CRYPTO_Init",
+        "CRYPTO_StructInit",
+        "CRYPTO_DMAStructInit",
+        "CRYPTO_InitDMADescriptor",
+        "CRPYTO_ProcessData",
+        "CRYPTO_SetKey"
+      ],
+      "totalLines": 210,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_dma.c": {
+      "filePath": "vg015/plib/src/plib015_dma.c",
+      "contentHash": "09f51e0f7d71c0c0d95c41f1246e1b8ce11dac5007eae0cdf32665e101b0866f",
+      "functions": [
+        {
+          "name": "DMA_ChannelDeInit",
+          "params": [
+            "ChannelStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 6
+        },
+        {
+          "name": "DMA_ChannelInit",
+          "params": [
+            "ChannelStruct",
+            "ChannelInitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 36
+        },
+        {
+          "name": "DMA_ChannelStructInit",
+          "params": [
+            "ChannelInitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 22
+        },
+        {
+          "name": "DMA_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "DMA_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "DMA_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_dma.h",
+          "specifiers": [
+            "plib015_dma.h"
+          ]
+        }
+      ],
+      "exports": [
+        "DMA_ChannelDeInit",
+        "DMA_ChannelInit",
+        "DMA_ChannelStructInit",
+        "DMA_DeInit",
+        "DMA_Init",
+        "DMA_StructInit"
+      ],
+      "totalLines": 210,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_flash.c": {
+      "filePath": "vg015/plib/src/plib015_flash.c",
+      "contentHash": "57f5fc379750aab061f6650a2cfc19ddcd50db434665fbb50e6ed0b2acb7f043",
+      "functions": [
+        {
+          "name": "FLASH_ReadData",
+          "params": [
+            "AddrVal",
+            "DataArr",
+            "Region"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "FLASH_WriteData",
+          "params": [
+            "AddrVal",
+            "DataArr",
+            "Region"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 17
+        },
+        {
+          "name": "FLASH_ErasePage",
+          "params": [
+            "AddrVal",
+            "Region"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "FLASH_EraseFull",
+          "params": [
+            "Region"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_flash.h",
+          "specifiers": [
+            "plib015_flash.h"
+          ]
+        }
+      ],
+      "exports": [
+        "FLASH_ReadData",
+        "FLASH_WriteData",
+        "FLASH_ErasePage",
+        "FLASH_EraseFull"
+      ],
+      "totalLines": 164,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_gpio.c": {
+      "filePath": "vg015/plib/src/plib015_gpio.c",
+      "contentHash": "d8b14acc27a1f4cb92a6589e8a9756705050b96569063af5e68a73a179ffbe8f",
+      "functions": [
+        {
+          "name": "modeConfig",
+          "params": [
+            "Reg",
+            "Pin",
+            "Val"
+          ],
+          "returnType": "void",
+          "exported": false,
+          "lineCount": 13
+        },
+        {
+          "name": "GPIO_OutModeConfig",
+          "params": [
+            "GPIOx",
+            "Pin",
+            "OutMode"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "GPIO_PullModeConfig",
+          "params": [
+            "GPIOx",
+            "Pin",
+            "PullMode"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "GPIO_AltFuncNumConfig",
+          "params": [
+            "GPIOx",
+            "Pin",
+            "AltFuncNum"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 31
+        },
+        {
+          "name": "GPIO_DeInit",
+          "params": [
+            "GPIOx"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "GPIO_Init",
+          "params": [
+            "GPIOx",
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "GPIO_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_gpio.h",
+          "specifiers": [
+            "plib015_gpio.h"
+          ]
+        }
+      ],
+      "exports": [
+        "GPIO_OutModeConfig",
+        "GPIO_PullModeConfig",
+        "GPIO_AltFuncNumConfig",
+        "GPIO_DeInit",
+        "GPIO_Init",
+        "GPIO_StructInit"
+      ],
+      "totalLines": 222,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_hash.c": {
+      "filePath": "vg015/plib/src/plib015_hash.c",
+      "contentHash": "9778a0a992c19d9847179f6d18fa3239fff59877dcd03851fd3b285ed07587bd",
+      "functions": [
+        {
+          "name": "HASH_GetHashLen",
+          "params": [
+            "algo"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "HASH_GetHashBuffer",
+          "params": [
+            "buffer"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 12
+        },
+        {
+          "name": "HASH_SetHashBuffer",
+          "params": [
+            "buffer",
+            "len"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "HASH_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "HASH_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "HASH_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_hash.h",
+          "specifiers": [
+            "plib015_hash.h"
+          ]
+        }
+      ],
+      "exports": [
+        "HASH_GetHashLen",
+        "HASH_GetHashBuffer",
+        "HASH_SetHashBuffer",
+        "HASH_DeInit",
+        "HASH_Init",
+        "HASH_StructInit"
+      ],
+      "totalLines": 165,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_i2c.c": {
+      "filePath": "vg015/plib/src/plib015_i2c.c",
+      "contentHash": "b8c88601a9d0dbc33f939689fe4809ebdf258bb60089ccdcd167863a834a79ba",
+      "functions": [
+        {
+          "name": "I2C_FSFreqConfig",
+          "params": [
+            "FSFreq",
+            "I2CFreq"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "I2C_HSFreqConfig",
+          "params": [
+            "HSFreq",
+            "I2CFreq"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 7
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_i2c.h",
+          "specifiers": [
+            "plib015_i2c.h"
+          ]
+        }
+      ],
+      "exports": [
+        "I2C_FSFreqConfig",
+        "I2C_HSFreqConfig"
+      ],
+      "totalLines": 99,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_qspi.c": {
+      "filePath": "vg015/plib/src/plib015_qspi.c",
+      "contentHash": "450eeb0329bb82ca917eb408954fab4eab6825a706cd6ffe0343d20a32297b8c",
+      "functions": [
+        {
+          "name": "QSPI_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "QSPI_SPI_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "QSPI_SPI_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "QSPI_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "QSPI_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_qspi.h",
+          "specifiers": [
+            "plib015_qspi.h"
+          ]
+        }
+      ],
+      "exports": [
+        "QSPI_DeInit",
+        "QSPI_SPI_Init",
+        "QSPI_SPI_StructInit",
+        "QSPI_Init",
+        "QSPI_StructInit"
+      ],
+      "totalLines": 160,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_rcu.c": {
+      "filePath": "vg015/plib/src/plib015_rcu.c",
+      "contentHash": "65cd3e14fa93adbe64baef11f11ea3d6c3c41ceafdb72c3a50a018a7b7e0c285",
+      "functions": [
+        {
+          "name": "getSysClkFreq",
+          "params": [
+            "Clk"
+          ],
+          "returnType": "uint32_t",
+          "exported": false,
+          "lineCount": 21
+        },
+        {
+          "name": "getPeriphClkFreq",
+          "params": [
+            "Clk"
+          ],
+          "returnType": "uint32_t",
+          "exported": false,
+          "lineCount": 21
+        },
+        {
+          "name": "getIwdtClkFreq",
+          "params": [
+            "Clk"
+          ],
+          "returnType": "uint32_t",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "RCU_GetHsiClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "RCU_GetHseClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "RCU_GetLsiClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 4
+        },
+        {
+          "name": "RCU_GetSysPLL0ClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 15
+        },
+        {
+          "name": "RCU_GetSysPLL1ClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "RCU_GetUsbPLLClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "RCU_GetSysClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "RCU_GetUARTClkFreq",
+          "params": [
+            "UARTx_Num"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "RCU_GetSPIClkFreq",
+          "params": [
+            "SPIx_Num"
+          ],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "RCU_GetADCSARClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "RCU_GetADCSDClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "RCU_GetWDTClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "RCU_GetIWDTClkFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "RCU_GetClkOutFreq",
+          "params": [],
+          "returnType": "uint32_t",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "RCU_SYSPLL0_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "OperationStatus",
+          "exported": true,
+          "lineCount": 36
+        },
+        {
+          "name": "RCU_USBPLL_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "OperationStatus",
+          "exported": true,
+          "lineCount": 36
+        },
+        {
+          "name": "RCU_PLL_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "RCU_SYSPLL_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "RCU_USBPLL_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "RCU_SysClkChangeCmd",
+          "params": [
+            "SysClk"
+          ],
+          "returnType": "OperationStatus",
+          "exported": true,
+          "lineCount": 23
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_rcu.h",
+          "specifiers": [
+            "plib015_rcu.h"
+          ]
+        }
+      ],
+      "exports": [
+        "RCU_GetHsiClkFreq",
+        "RCU_GetHseClkFreq",
+        "RCU_GetLsiClkFreq",
+        "RCU_GetSysPLL0ClkFreq",
+        "RCU_GetSysPLL1ClkFreq",
+        "RCU_GetUsbPLLClkFreq",
+        "RCU_GetSysClkFreq",
+        "RCU_GetUARTClkFreq",
+        "RCU_GetSPIClkFreq",
+        "RCU_GetADCSARClkFreq",
+        "RCU_GetADCSDClkFreq",
+        "RCU_GetWDTClkFreq",
+        "RCU_GetIWDTClkFreq",
+        "RCU_GetClkOutFreq",
+        "RCU_SYSPLL0_Init",
+        "RCU_USBPLL_Init",
+        "RCU_PLL_StructInit",
+        "RCU_SYSPLL_DeInit",
+        "RCU_USBPLL_DeInit",
+        "RCU_SysClkChangeCmd"
+      ],
+      "totalLines": 554,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_spi.c": {
+      "filePath": "vg015/plib/src/plib015_spi.c",
+      "contentHash": "182d46f5e2ddacb95188d8f237251fd2d3d0c2f41f2bd8b8ed2b0d4967c2d9cd",
+      "functions": [
+        {
+          "name": "SPI_DeInit",
+          "params": [
+            "SPIx"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "SPI_Init",
+          "params": [
+            "SPIx",
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "SPI_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 8
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_spi.h",
+          "specifiers": [
+            "plib015_spi.h"
+          ]
+        }
+      ],
+      "exports": [
+        "SPI_DeInit",
+        "SPI_Init",
+        "SPI_StructInit"
+      ],
+      "totalLines": 123,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_trng.c": {
+      "filePath": "vg015/plib/src/plib015_trng.c",
+      "contentHash": "10b2b235a6c14b977b3dcef4854b8b89c4e1f413febaadf7f34d0092d9c0f8de",
+      "functions": [
+        {
+          "name": "TRNG_DeInit",
+          "params": [],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 9
+        },
+        {
+          "name": "TRNG_Init",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 18
+        },
+        {
+          "name": "TRNG_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 20
+        },
+        {
+          "name": "TRNG_GenerateKey",
+          "params": [
+            "key",
+            "keyLength"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 31
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_trng.h",
+          "specifiers": [
+            "plib015_trng.h"
+          ]
+        }
+      ],
+      "exports": [
+        "TRNG_DeInit",
+        "TRNG_Init",
+        "TRNG_StructInit",
+        "TRNG_GenerateKey"
+      ],
+      "totalLines": 178,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_uart.c": {
+      "filePath": "vg015/plib/src/plib015_uart.c",
+      "contentHash": "629e6ae11cce88b9769aaba4531f7d74156c22e464e2b14bca0b704e26fe2ef3",
+      "functions": [
+        {
+          "name": "UART_AutoBaudConfig",
+          "params": [
+            "UARTx",
+            "BaudRate"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "UART_DeInit",
+          "params": [
+            "UARTx"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 21
+        },
+        {
+          "name": "UART_Init",
+          "params": [
+            "UARTx",
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "UART_StructInit",
+          "params": [
+            "InitStruct"
+          ],
+          "returnType": "void",
+          "exported": true,
+          "lineCount": 10
+        }
+      ],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_uart.h",
+          "specifiers": [
+            "plib015_uart.h"
+          ]
+        }
+      ],
+      "exports": [
+        "UART_AutoBaudConfig",
+        "UART_DeInit",
+        "UART_Init",
+        "UART_StructInit"
+      ],
+      "totalLines": 164,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/plib/src/plib015_wdt.c": {
+      "filePath": "vg015/plib/src/plib015_wdt.c",
+      "contentHash": "fec3a999769b126ef518cbe2ca13f5c60141aeb0dec45186a1d750a241f9dcca",
+      "functions": [],
+      "classes": [],
+      "imports": [
+        {
+          "source": "plib015_wdt.h",
+          "specifiers": [
+            "plib015_wdt.h"
+          ]
+        }
+      ],
+      "exports": [],
+      "totalLines": 71,
+      "hasStructuralAnalysis": true
+    },
+    "vg015/README.md": {
+      "filePath": "vg015/README.md",
+      "contentHash": "f96a207275fa98aeadbad563856307340fb134a95a8b3ff2e76c1164926a3b80",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 52,
+      "hasStructuralAnalysis": true
+    }
+  }
+}
