@@ -1,0 +1,41 @@
+# .understandignore — patterns for files/dirs to exclude from analysis
+# Syntax: same as .gitignore (globs, # comments, ! negation, trailing / for dirs)
+#
+# Built-in defaults (always excluded): node_modules/, .git/, dist/, build/, obj/, *.lock, *.min.js, etc.
+#
+
+# Build artifacts — compiled binaries and object files
+build/
+*.o
+*.elf
+*.bin
+*.hex
+*.dump
+
+# Agent/AI tooling configuration (not project code)
+.cursor/rules/
+.cursor/hooks/
+.agents/
+.cursor/skills/
+
+# pycache
+__pycache__/
+*.pyc
+
+# VS Code and IDE settings
+.vscode/
+.cursor/settings.json
+.cursor/hooks.json
+
+# CodeGraph index
+.codegraph/
+
+# Claude settings
+.claude/
+
+# Misc
+skills-lock.json
+requirements.txt
+WORKPROJECT_AI_PLAYBOOK.md
+AGENTS.md
+niiet_aspect.json
