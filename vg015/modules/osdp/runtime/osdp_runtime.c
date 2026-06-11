@@ -72,12 +72,53 @@ static void osdp_build_and_send_raw(uint8_t seq, const osdp_card_event_t *event)
     osdp_build_crc_and_send(tx, i);
 }
 
+/* Маппинг декодированной клавиши (0-9, 0x0A='*', 0x0B='#') в байт OSDP keypad.
+ * Подправить под ожидания контроллера, если формат иной. */
+static uint8_t osdp_keypad_byte(uint8_t key)
+{
+    if (key <= 9u) {
+        return (uint8_t)(0x30u + key); /* '0'..'9' (ASCII) */
+    }
+    if (key == 0x0Au) {
+        return 0x7Fu;                  /* '*' */
+    }
+    return 0x0Du;                      /* '#' -> ENTER */
+}
+
+/* REPLY osdp_KEYPAD (0x53): reader_no, digit_count, <коды клавиш>.
+ * Весь набранный PIN уходит одним ответом (digit_count = N). */
+static void osdp_build_and_send_keypad(uint8_t seq, const osdp_card_event_t *event)
+{
+    uint8_t tx[32];
+    uint16_t i;
+    uint8_t n;
+
+    if (!event || event->data_len == 0u || event->data_len > sizeof(event->data)) {
+        osdp_build_and_send_ack(seq);
+        return;
+    }
+
+    i = osdp_build_header(tx, (uint16_t)(OSDP_HEADER_LEN + 2u + event->data_len), seq);
+    tx[i++] = osdp_KEYPAD;
+    tx[i++] = event->reader_no;
+    tx[i++] = event->data_len;                 /* digit count */
+    for (n = 0u; n < event->data_len; ++n) {
+        tx[i++] = osdp_keypad_byte(event->data[n]);
+    }
+    osdp_build_crc_and_send(tx, i);
+}
+
 static void set_led_state(uint8_t on)
 {
     osdp_port_set_output(0u, on != 0u);
     osdp_port_set_output(1u, on != 0u);
     osdp_port_set_output(2u, on != 0u);
     osdp_port_set_output(3u, on != 0u);
+}
+
+void osdp_set_outputs(uint8_t on)
+{
+    set_led_state(on);
 }
 
 static void update_flag_led_init(void)
@@ -252,11 +293,41 @@ void osdp_enqueue_raw_card(uint8_t reader_no, uint8_t bit_count, const uint8_t *
     }
 
     slot = &g_runtime_ctx.card_event_queue[g_runtime_ctx.card_event_tail];
+    slot->type = OSDP_EVENT_TYPE_RAW;
     slot->reader_no = reader_no;
     slot->bit_count = bit_count;
     slot->data_len = data_len;
     for (i = 0u; i < data_len; ++i) {
         slot->data[i] = data[i];
+    }
+
+    g_runtime_ctx.card_event_tail = (uint8_t)((g_runtime_ctx.card_event_tail + 1u) % OSDP_CARD_EVENT_QUEUE_CAPACITY);
+    g_runtime_ctx.card_event_count++;
+    InterruptEnable();
+}
+
+void osdp_enqueue_keypad(uint8_t reader_no, const uint8_t *keys, uint8_t count)
+{
+    osdp_card_event_t *slot;
+    uint8_t i;
+
+    if (!keys || count == 0u || count > 8u) {
+        return;
+    }
+
+    InterruptDisable();
+    if (g_runtime_ctx.card_event_count >= OSDP_CARD_EVENT_QUEUE_CAPACITY) {
+        g_runtime_ctx.card_event_head = (uint8_t)((g_runtime_ctx.card_event_head + 1u) % OSDP_CARD_EVENT_QUEUE_CAPACITY);
+        g_runtime_ctx.card_event_count--;
+    }
+
+    slot = &g_runtime_ctx.card_event_queue[g_runtime_ctx.card_event_tail];
+    slot->type = OSDP_EVENT_TYPE_KEYPAD;
+    slot->reader_no = reader_no;
+    slot->bit_count = 0u;
+    slot->data_len = count;
+    for (i = 0u; i < count; ++i) {
+        slot->data[i] = keys[i];
     }
 
     g_runtime_ctx.card_event_tail = (uint8_t)((g_runtime_ctx.card_event_tail + 1u) % OSDP_CARD_EVENT_QUEUE_CAPACITY);
@@ -284,7 +355,11 @@ int osdp_try_send_queued_event(uint8_t seq)
         event.data[i] = 0u;
     }
 
-    osdp_build_and_send_raw(seq, &event);
+    if (event.type == OSDP_EVENT_TYPE_KEYPAD) {
+        osdp_build_and_send_keypad(seq, &event);
+    } else {
+        osdp_build_and_send_raw(seq, &event);
+    }
     return 1;
 }
 
@@ -795,6 +870,7 @@ void osdp_runtime_init(void)
     /* main.c leaves UART4 at a fixed rate; align hardware with stored OSDP baud. */
     osdp_port_set_uart_baud(g_runtime_ctx.baud);
     osdp_port_extflash_init();
+    osdp_port_outputs_init();      /* выходы OSDP на PA12-15 */
     update_flag_led_init();
     update_flag_led_set(osdp_port_update_flag_is_pending());
 

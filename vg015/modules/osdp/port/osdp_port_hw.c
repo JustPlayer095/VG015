@@ -85,20 +85,30 @@ bool osdp_port_read_input(uint8_t idx)
     if (idx >= 4u) return false;
     return GPIO_ReadBit(GPIOA, pins[idx]) ? true : false;
 }
+#define OSDP_OUT_MASK ((uint32_t)0xF000u)  /* PA12-15 */
 
 bool osdp_port_read_output(uint8_t idx)
 {
-    const uint32_t pins[4] = {GPIO_Pin_4, GPIO_Pin_5, GPIO_Pin_6, GPIO_Pin_7};
+    const uint32_t pins[4] = {GPIO_Pin_12, GPIO_Pin_13, GPIO_Pin_14, GPIO_Pin_15};
     if (idx >= 4u) return false;
     return GPIO_ReadBit(GPIOA, pins[idx]) ? true : false;
 }
 
 void osdp_port_set_output(uint8_t idx, bool on)
 {
-    const uint32_t pins[4] = {GPIO_Pin_4, GPIO_Pin_5, GPIO_Pin_6, GPIO_Pin_7};
+    const uint32_t pins[4] = {GPIO_Pin_12, GPIO_Pin_13, GPIO_Pin_14, GPIO_Pin_15};
     if (idx >= 4u) return;
     if (on) GPIO_SetBits(GPIOA, pins[idx]);
     else GPIO_ClearBits(GPIOA, pins[idx]);
+}
+
+void osdp_port_outputs_init(void)
+{
+    RCU->CGCFGAHB_bit.GPIOAEN = 1;
+    RCU->RSTDISAHB_bit.GPIOAEN = 1;
+    GPIOA->ALTFUNCCLR = OSDP_OUT_MASK;
+    GPIOA->DATAOUTCLR = OSDP_OUT_MASK;   /* старт в 0 */
+    GPIOA->OUTENSET   = OSDP_OUT_MASK;
 }
 
 bool osdp_port_extflash_erase_range_4k(uint32_t base, uint32_t size)

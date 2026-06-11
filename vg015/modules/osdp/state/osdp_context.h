@@ -53,9 +53,14 @@ typedef struct {
     uint8_t perm_off_color_is_on;
 } osdp_led_ctrl_t;
 
+/* type события в очереди */
+#define OSDP_EVENT_TYPE_RAW    0u  /* код карты -> osdp_RAW (0x50)    */
+#define OSDP_EVENT_TYPE_KEYPAD 1u  /* код клавиши -> osdp_KEYPAD (0x53) */
+
 typedef struct {
+    uint8_t type;       /* OSDP_EVENT_TYPE_* */
     uint8_t reader_no;
-    uint8_t bit_count;
+    uint8_t bit_count;  /* для RAW: число бит кадра; для KEYPAD не используется */
     uint8_t data_len;
     uint8_t data[8];
 } osdp_card_event_t;
