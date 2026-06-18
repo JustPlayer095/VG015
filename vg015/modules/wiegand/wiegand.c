@@ -13,17 +13,6 @@
 #define WIEGAND_PIN_MAX 8u            /* макс. цифр PIN (ограничено data[8] в OSDP-событии) */
 #define WIEGAND_PIN_TIMEOUT_MS 10000u /* сброс недобранного PIN по простою */
 
-/* Тест локального доступа: vg015 сам сверяет карту+PIN (без внешнего контроллера)
- * и при совпадении выставляет выходы OSDP (PA4-7) в 1 (защёлка). В боевом режиме
- * выключить — решение принимает контроллер по своей базе. */
-#define WIEGAND_LOCAL_ACCESS_TEST 1u
-#define WIEGAND_LOCAL_PIN { 2u, 3u }
-
-/* Кнопочный эмулятор клавиатуры (тест-инструмент): 4 кнопки PB4-7 -> бит-банг
- * HID-кадра на PB8/9. Перемычки PB8->PB12, PB9->PB13 заводят кадр в приёмник
- * ридера 0. В боевом режиме выключить и цеплять реальный ридер на PB12/13. */
-#define WIEGAND_KEYPAD_EMU_ENABLE 1u
-
 typedef struct {
     GPIO_TypeDef *port;
     uint32_t pin;
@@ -65,228 +54,6 @@ static uint8_t  g_pin_buf[WIEGAND_READERS_COUNT][WIEGAND_PIN_MAX];
 static uint8_t  g_pin_len[WIEGAND_READERS_COUNT];
 static uint32_t g_pin_idle_ms[WIEGAND_READERS_COUNT];
 
-#if WIEGAND_LOCAL_ACCESS_TEST
-static const uint8_t g_local_pin[] = WIEGAND_LOCAL_PIN;
-/* Общая сессия доступа: карта на ЛЮБОМ ридере армит, PIN на любом — проверяет.
- * Стендовый режим (карта r1, кнопки r0). */
-static uint8_t  g_access_armed;
-static uint32_t g_access_idle_ms;
-
-/* Обратная связь выходами: короткие морги поверх состояния защёлки.
- * Принятая цифра -> 1 морг, '#' без совпадения -> 2 морга. Морг — инверсия
- * фона, после серии выходы возвращаются в состояние защёлки. */
-#define WIEGAND_FB_PHASE_MS 60u
-
-static uint8_t  g_latch_on;          /* фоновое состояние защёлки */
-static uint8_t  g_fb_blinks_left;    /* сколько импульсов осталось */
-static uint8_t  g_fb_phase_on;       /* 1 = идёт фаза-инверсия */
-static uint32_t g_fb_phase_ms_left;
-
-static void wiegand_fb_latch(uint8_t on)
-{
-    g_latch_on = on;
-    g_fb_blinks_left = 0u;
-    g_fb_phase_on = 0u;
-    g_fb_phase_ms_left = 0u;
-    osdp_set_outputs(on);
-}
-
-static void wiegand_fb_blink(uint8_t count)
-{
-    g_fb_blinks_left = count;
-    g_fb_phase_on = 0u;
-    g_fb_phase_ms_left = 0u;
-}
-
-static void wiegand_fb_tick_1ms(void)
-{
-    if (g_fb_phase_ms_left > 0u) {
-        g_fb_phase_ms_left--;
-        return;
-    }
-    if (g_fb_phase_on) {                         /* импульс кончился -> пауза-фон */
-        g_fb_phase_on = 0u;
-        osdp_set_outputs(g_latch_on);
-        g_fb_phase_ms_left = WIEGAND_FB_PHASE_MS;
-        return;
-    }
-    if (g_fb_blinks_left > 0u) {                 /* следующий импульс */
-        g_fb_blinks_left--;
-        g_fb_phase_on = 1u;
-        osdp_set_outputs(g_latch_on ? 0u : 1u);
-        g_fb_phase_ms_left = WIEGAND_FB_PHASE_MS;
-    }
-}
-#endif
-
-
-#if WIEGAND_KEYPAD_EMU_ENABLE
-/* Выход на ридер 0: PB8 = W0, PB9 = W1 (перемычки PB8->PB12, PB9->PB13). */
-#define KEYPAD_EMU_OUT_PORT GPIOB
-#define KEYPAD_EMU_W0_PIN   GPIO_Pin_8
-#define KEYPAD_EMU_W1_PIN   GPIO_Pin_9
-#define KEYPAD_EMU_DEBOUNCE_MS 30u
-#define KEYPAD_EMU_PULSE_LOW_MS 2u   /* длительность низкого импульса бита */
-#define KEYPAD_EMU_PULSE_GAP_MS 2u   /* пауза между битами */
-
-typedef struct {
-    uint32_t pin;   /* пин кнопки на GPIOB */
-    uint8_t  key;   /* 0-9, 0x0A='*', 0x0B='#' */
-} keypad_emu_btn_t;
-
-/* PB4..PB7 -> '1','2','3','#' */
-static const keypad_emu_btn_t g_keypad_emu_btns[4] = {
-    { GPIO_Pin_4, 0x01u },
-    { GPIO_Pin_5, 0x02u },
-    { GPIO_Pin_6, 0x03u },
-    { GPIO_Pin_7, 0x0Bu }
-};
-
-typedef struct {
-    uint8_t  active;
-    uint8_t  bits[4];      /* HID = 4 бита */
-    uint8_t  bit_count;
-    uint8_t  bit_pos;
-    uint8_t  phase_low;
-    uint32_t phase_ms_left;
-} keypad_emu_tx_t;
-
-static keypad_emu_tx_t g_keypad_emu_tx;
-static uint8_t g_keypad_emu_state[4];     /* 0 = отпущена, 1 = нажата (после антидребезга) */
-static uint8_t g_keypad_emu_db[4];        /* счётчик устойчивости уровня, мс */
-
-static void keypad_emu_idle_high(void)
-{
-    GPIO_SetBits(KEYPAD_EMU_OUT_PORT, KEYPAD_EMU_W0_PIN);
-    GPIO_SetBits(KEYPAD_EMU_OUT_PORT, KEYPAD_EMU_W1_PIN);
-}
-
-/* Загрузить 4-битный HID-кадр клавиши (MSB первым) в эмиттер. */
-static void keypad_emu_load_hid(uint8_t key)
-{
-    g_keypad_emu_tx.bits[0] = (uint8_t)((key >> 3u) & 1u);
-    g_keypad_emu_tx.bits[1] = (uint8_t)((key >> 2u) & 1u);
-    g_keypad_emu_tx.bits[2] = (uint8_t)((key >> 1u) & 1u);
-    g_keypad_emu_tx.bits[3] = (uint8_t)(key & 1u);
-    g_keypad_emu_tx.bit_count = 4u;
-    g_keypad_emu_tx.bit_pos = 0u;
-    g_keypad_emu_tx.phase_low = 0u;
-    g_keypad_emu_tx.phase_ms_left = 0u;
-    g_keypad_emu_tx.active = 1u;
-}
-
-static void keypad_emu_init(void)
-{
-    uint8_t i;
-    GPIO_Init_TypeDef gpio;
-
-    RCU->CGCFGAHB_bit.GPIOBEN = 1u;
-    RCU->RSTDISAHB_bit.GPIOBEN = 1u;
-
-    /* выходы PB8/PB9 в open-drain: только тянут вниз, высокий держит подтяжка
-     * приёмника PB12/13. Безопасно делить линию с реальным ридером (Wiegand =
-     * открытый коллектор). */
-    GPIO_StructInit(&gpio);
-    gpio.Out = ENABLE;
-    gpio.AltFunc = DISABLE;
-    gpio.AltFuncNum = GPIO_AltFuncNum_None;
-    gpio.PullMode = GPIO_PullMode_Disable;
-    gpio.OutMode = GPIO_OutMode_OD;
-    gpio.Pin = KEYPAD_EMU_W0_PIN;
-    GPIO_Init(KEYPAD_EMU_OUT_PORT, &gpio);
-    gpio.Pin = KEYPAD_EMU_W1_PIN;
-    GPIO_Init(KEYPAD_EMU_OUT_PORT, &gpio);
-    keypad_emu_idle_high();
-
-    /* входы кнопок PB4-7 с подтяжкой вверх (нажатие = низкий) */
-    for (i = 0u; i < 4u; ++i) {
-        GPIO_StructInit(&gpio);
-        gpio.Pin = g_keypad_emu_btns[i].pin;
-        gpio.Out = DISABLE;
-        gpio.AltFunc = DISABLE;
-        gpio.AltFuncNum = GPIO_AltFuncNum_None;
-        gpio.PullMode = GPIO_PullMode_PU;
-        gpio.OutMode = GPIO_OutMode_PP;
-        GPIO_Init(GPIOB, &gpio);
-        g_keypad_emu_state[i] = 0u;
-        g_keypad_emu_db[i] = 0u;
-    }
-
-    g_keypad_emu_tx.active = 0u;
-}
-
-/* Эмиссия одного кадра: на бит — фаза low (2мс) + фаза idle (2мс). */
-static void keypad_emu_tx_tick(void)
-{
-    uint8_t bit;
-
-    if (!g_keypad_emu_tx.active) {
-        return;
-    }
-    if (g_keypad_emu_tx.phase_ms_left > 0u) {
-        g_keypad_emu_tx.phase_ms_left--;
-        return;
-    }
-    if (g_keypad_emu_tx.bit_pos >= g_keypad_emu_tx.bit_count) {
-        keypad_emu_idle_high();
-        g_keypad_emu_tx.active = 0u;
-        return;
-    }
-
-    bit = g_keypad_emu_tx.bits[g_keypad_emu_tx.bit_pos];
-    if (!g_keypad_emu_tx.phase_low) {
-        if (bit == 0u) {
-            GPIO_ClearBits(KEYPAD_EMU_OUT_PORT, KEYPAD_EMU_W0_PIN);
-        } else {
-            GPIO_ClearBits(KEYPAD_EMU_OUT_PORT, KEYPAD_EMU_W1_PIN);
-        }
-        g_keypad_emu_tx.phase_low = 1u;
-        g_keypad_emu_tx.phase_ms_left = KEYPAD_EMU_PULSE_LOW_MS;
-    } else {
-        keypad_emu_idle_high();
-        g_keypad_emu_tx.phase_low = 0u;
-        g_keypad_emu_tx.bit_pos++;
-        g_keypad_emu_tx.phase_ms_left = KEYPAD_EMU_PULSE_GAP_MS;
-    }
-}
-
-/* Опрос кнопок с антидребезгом; фронт нажатия -> эмиссия кадра. */
-static void keypad_emu_scan_tick(void)
-{
-    uint8_t i;
-
-    /* пока эмиттер занят — не стартуем новый кадр */
-    if (g_keypad_emu_tx.active) {
-        return;
-    }
-
-    for (i = 0u; i < 4u; ++i) {
-        uint8_t pressed = (GPIO_ReadBit(GPIOB, g_keypad_emu_btns[i].pin) == 0) ? 1u : 0u;
-
-        if (pressed != g_keypad_emu_state[i]) {
-            if (g_keypad_emu_db[i] < KEYPAD_EMU_DEBOUNCE_MS) {
-                g_keypad_emu_db[i]++;
-            }
-            if (g_keypad_emu_db[i] >= KEYPAD_EMU_DEBOUNCE_MS) {
-                g_keypad_emu_state[i] = pressed;
-                g_keypad_emu_db[i] = 0u;
-                if (pressed) {                 /* фронт отпущена->нажата */
-                    keypad_emu_load_hid(g_keypad_emu_btns[i].key);
-                    return;                    /* один кадр за тик */
-                }
-            }
-        } else {
-            g_keypad_emu_db[i] = 0u;
-        }
-    }
-}
-
-static void keypad_emu_tick_1ms(void)
-{
-    keypad_emu_tx_tick();
-    keypad_emu_scan_tick();
-}
-#endif
 
 static uint8_t wiegand_parity_ok_26(uint64_t bits)
 {
@@ -326,15 +93,15 @@ static uint8_t wiegand_parity_ok_34(uint64_t bits)
 }
 
 /* Короткий кадр клавиатуры ридера.
- *  HID            : 4 бита, код клавиши = BCD напрямую.
+ *  HID (Parsec)   : 6 бит, [Pлид][4 данных][Pхвост]; средний ниббл = код клавиши.
  *  Indala/Motorola: 8 бит, старший ниббл = ~младший (контроль), клавиша = младший.
- * Клавиши: 0-9, 0x0A = '*', 0x0B = '#'. */
+ * Кодировка ниббла (станд. HID): 0-9 = 0b0000..0b1001, '*' = 0b1010, '#' = 0b1011. */
 static uint8_t wiegand_try_decode_keypad(uint8_t bit_count, uint64_t bits, uint8_t *out_key)
 {
     uint8_t key;
 
-    if (bit_count == 4u) {            /* HID */
-        key = (uint8_t)(bits & 0x0Fu);
+    if (bit_count == 6u) {           /* Parsec HID: ниббл = код клавиши напрямую */
+        key = (uint8_t)((bits >> 1u) & 0x0Fu);
     } else if (bit_count == 8u) {     /* Indala/Motorola */
         uint8_t hi = (uint8_t)((bits >> 4u) & 0x0Fu);
         uint8_t lo = (uint8_t)(bits & 0x0Fu);
@@ -364,35 +131,10 @@ static void wiegand_keypad_handle(uint8_t reader, uint8_t key)
             g_pin_len[reader]++;
         }
         g_pin_idle_ms[reader] = 0u;
-#if WIEGAND_LOCAL_ACCESS_TEST
-        g_access_idle_ms = 0u;            /* набор продлевает сессию */
-        wiegand_fb_blink(1u);             /* подтверждение принятой цифры */
-#endif
     } else if (key == 0x0Au) {            /* '*' сброс */
         g_pin_len[reader] = 0u;
         g_pin_idle_ms[reader] = 0u;
     } else if (key == 0x0Bu) {            /* '#' завершение */
-#if WIEGAND_LOCAL_ACCESS_TEST
-        {
-            uint8_t match = 0u;
-            if (g_access_armed && g_pin_len[reader] == (uint8_t)sizeof(g_local_pin)) {
-                uint8_t k;
-                match = 1u;
-                for (k = 0u; k < (uint8_t)sizeof(g_local_pin); ++k) {
-                    if (g_pin_buf[reader][k] != g_local_pin[k]) {
-                        match = 0u;
-                        break;
-                    }
-                }
-            }
-            if (match) {
-                wiegand_fb_latch(1u);            /* верно -> защёлка 1 */
-            } else {
-                wiegand_fb_latch(0u);
-                wiegand_fb_blink(2u);            /* отказ -> двойной морг */
-            }
-        }
-#endif
         if (g_pin_len[reader] > 0u) {
             osdp_enqueue_keypad(reader, g_pin_buf[reader], g_pin_len[reader]);
         }
@@ -485,13 +227,21 @@ static void wiegand_push_reader_frame(uint8_t reader)
     /* новая карта — начинаем PIN-сессию заново */
     g_pin_len[reader] = 0u;
     g_pin_idle_ms[reader] = 0u;
-#if WIEGAND_LOCAL_ACCESS_TEST
-    g_access_armed = 1u;          /* карта прошла — ждём PIN (общая сессия) */
-    g_access_idle_ms = 0u;
-    wiegand_fb_latch(0u);         /* новая карта гасит защёлку */
-#endif
+
+    /* Снимаем биты чётности Wiegand (лид+хвост) -> чистые данные карты.
+     * 26->24 (facility8+card16), 34->32 (UID32). Результат байт-выровнен,
+     * что корректно парсится приёмником без потерь на floor(bits/8). */
+    if (bit_count == 26u || bit_count == 34u) {
+        uint8_t data_bits = (uint8_t)(bit_count - 2u);
+        bits = (bits >> 1u) & ((((uint64_t)1u) << data_bits) - 1u);
+        bit_count = data_bits;
+    }
 
     bytes = (uint8_t)((bit_count + 7u) / 8u);
+
+    /* OSDP RAW: биты лево-выровнены (1-й бит данных = MSB байта 0),
+     * хвостовые незанятые биты = 0. */
+    bits <<= (uint8_t)(bytes * 8u - bit_count);
 
     for (i = 0u; i < bytes; ++i) {
         payload[(bytes - 1u) - i] = (uint8_t)(bits & 0xFFu);
@@ -566,9 +316,6 @@ void wiegand_init(void)
         GPIO_ITCmd(g_lines[i].port, g_lines[i].pin, ENABLE);
     }
 
-#if WIEGAND_KEYPAD_EMU_ENABLE
-    keypad_emu_init();
-#endif
 }
 
 void wiegand_gpio_irq_handler(void)
@@ -612,21 +359,4 @@ void wiegand_tick_1ms(void)
             wiegand_push_reader_frame(i);
         }
     }
-
-#if WIEGAND_LOCAL_ACCESS_TEST
-    wiegand_fb_tick_1ms();
-
-    /* общий таймаут сессии доступа (раз в мс, вне цикла ридеров) */
-    if (g_access_armed) {
-        g_access_idle_ms++;
-        if (g_access_idle_ms >= WIEGAND_PIN_TIMEOUT_MS) {
-            g_access_armed = 0u;
-            g_access_idle_ms = 0u;
-        }
-    }
-#endif
-
-#if WIEGAND_KEYPAD_EMU_ENABLE
-    keypad_emu_tick_1ms();
-#endif
 }
