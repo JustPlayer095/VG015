@@ -61,11 +61,14 @@ static void osdp_build_and_send_raw(uint8_t seq, const osdp_card_event_t *event)
         return;
     }
 
-    i = osdp_build_header(tx, (uint16_t)(OSDP_HEADER_LEN + 3u + event->data_len), seq);
+    /* osdp_RAW по спеке: reader_no | format | bit_count(LE16) | card_data.
+     * format = 0 (raw/unspecified). data_len = ceil(bit_count/8) байт карты. */
+    i = osdp_build_header(tx, (uint16_t)(OSDP_HEADER_LEN + 4u + event->data_len), seq);
     tx[i++] = osdp_RAW;
     tx[i++] = event->reader_no;
-    tx[i++] = event->bit_count;
-    tx[i++] = event->data_len;
+    tx[i++] = 0u;                                              /* format code */
+    tx[i++] = (uint8_t)(event->bit_count & 0xFFu);            /* bit count LSB */
+    tx[i++] = (uint8_t)(((uint16_t)event->bit_count >> 8) & 0xFFu); /* bit count MSB */
     for (n = 0u; n < event->data_len; ++n) {
         tx[i++] = event->data[n];
     }
