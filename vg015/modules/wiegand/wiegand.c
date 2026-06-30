@@ -13,6 +13,13 @@
 #define WIEGAND_PIN_MAX 8u            /* макс. цифр PIN (ограничено data[8] в OSDP-событии) */
 #define WIEGAND_PIN_TIMEOUT_MS 10000u /* сброс недобранного PIN по простою */
 
+/* Режим передачи PIN от МК к ПК по OSDP:
+ *  WHOLE — цифры копятся в буфер, по '#' уходит весь PIN одним кадром;
+ *  CHAR  — каждая клавиша (вкл. '*' и '#') уходит немедленно отдельным кадром */
+#define WIEGAND_PIN_MODE_WHOLE 0u
+#define WIEGAND_PIN_MODE_CHAR  1u
+#define WIEGAND_PIN_MODE WIEGAND_PIN_MODE_WHOLE
+
 typedef struct {
     GPIO_TypeDef *port;
     uint32_t pin;
@@ -121,10 +128,12 @@ static uint8_t wiegand_try_decode_keypad(uint8_t bit_count, uint64_t bits, uint8
     return 1u;
 }
 
-/* Накопление PIN: цифры (0-9) копятся, '*' сбрасывает, '#' отправляет весь
- * набранный код одним OSDP-ответом 0x53 и очищает буфер. */
 static void wiegand_keypad_handle(uint8_t reader, uint8_t key)
 {
+#if WIEGAND_PIN_MODE == WIEGAND_PIN_MODE_CHAR
+    osdp_enqueue_keypad(reader, &key, 1u);
+    g_pin_idle_ms[reader] = 0u;
+#else
     if (key <= 9u) {
         if (g_pin_len[reader] < WIEGAND_PIN_MAX) {
             g_pin_buf[reader][g_pin_len[reader]] = key;
@@ -141,6 +150,7 @@ static void wiegand_keypad_handle(uint8_t reader, uint8_t key)
         g_pin_len[reader] = 0u;
         g_pin_idle_ms[reader] = 0u;
     }
+#endif
 }
 
 static uint8_t wiegand_is_supported_length(uint8_t bits)
