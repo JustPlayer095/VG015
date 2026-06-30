@@ -18,7 +18,7 @@
  *  CHAR  — каждая клавиша (вкл. '*' и '#') уходит немедленно отдельным кадром */
 #define WIEGAND_PIN_MODE_WHOLE 0u
 #define WIEGAND_PIN_MODE_CHAR  1u
-#define WIEGAND_PIN_MODE WIEGAND_PIN_MODE_WHOLE
+#define WIEGAND_PIN_MODE WIEGAND_PIN_MODE_CHAR
 
 typedef struct {
     GPIO_TypeDef *port;
@@ -107,8 +107,16 @@ static uint8_t wiegand_try_decode_keypad(uint8_t bit_count, uint64_t bits, uint8
 {
     uint8_t key;
 
-    if (bit_count == 6u) {           /* Parsec HID: ниббл = код клавиши напрямую */
-        key = (uint8_t)((bits >> 1u) & 0x0Fu);
+    if (bit_count == 6u) {           /* Parsec HID: [Pлид][4 данных][Pхвост] */
+        uint8_t plead = (uint8_t)((bits >> 5u) & 1u);
+        uint8_t ptail = (uint8_t)(bits & 1u);
+        uint8_t data     = (uint8_t)((bits >> 1u) & 0x0Fu);
+        uint8_t exp_lead = (uint8_t)(((data >> 3u) & 1u) ^ ((data >> 2u) & 1u));
+        uint8_t exp_tail = (uint8_t)(((data >> 1u) & 1u) ^ (data & 1u) ^ 1u);
+        if (plead != exp_lead || ptail != exp_tail) {
+            return 0u;                /* чётность не сошлась -> брак */
+        }
+        key = data;
     } else if (bit_count == 8u) {     /* Indala/Motorola */
         uint8_t hi = (uint8_t)((bits >> 4u) & 0x0Fu);
         uint8_t lo = (uint8_t)(bits & 0x0Fu);
@@ -116,6 +124,8 @@ static uint8_t wiegand_try_decode_keypad(uint8_t bit_count, uint64_t bits, uint8
             return 0u;                /* инверсия не сошлась -> брак */
         }
         key = lo;
+    } else if (bit_count == 4){
+        key = (uint8_t)(bits & 0x0Fu);
     } else {
         return 0u;
     }
@@ -201,12 +211,10 @@ static void wiegand_push_reader_frame(uint8_t reader)
 
     /* Короткий кадр -> код клавиши. Перехватываем до проверок длины карты.
      * Клавиши не подпадают под анти-повтор карты — проходят всегда (в т.ч. сразу после карты). */
-    {
-        uint8_t key;
-        if (wiegand_try_decode_keypad(bit_count, bits, &key)) {
-            wiegand_keypad_handle(reader, key);
-            return;
-        }
+    uint8_t key;
+    if (wiegand_try_decode_keypad(bit_count, bits, &key)) {
+        wiegand_keypad_handle(reader, key);
+        return;
     }
 
     {
