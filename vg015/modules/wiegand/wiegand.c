@@ -13,12 +13,11 @@
 #define WIEGAND_PIN_MAX 8u            /* макс. цифр PIN (ограничено data[8] в OSDP-событии) */
 #define WIEGAND_PIN_TIMEOUT_MS 10000u /* сброс недобранного PIN по простою */
 
-/* Режим передачи PIN от МК к ПК по OSDP:
- *  WHOLE — цифры копятся в буфер, по '#' уходит весь PIN одним кадром;
- *  CHAR  — каждая клавиша (вкл. '*' и '#') уходит немедленно отдельным кадром */
-#define WIEGAND_PIN_MODE_WHOLE 0u
-#define WIEGAND_PIN_MODE_CHAR  1u
-#define WIEGAND_PIN_MODE WIEGAND_PIN_MODE_CHAR
+/* Режим передачи PIN от МК к ПК по OSDP (runtime, задаётся клиентом по MFG
+ * CHGPINMOD; volatile — не хранится, дефолт CHAR):
+ *  WHOLE (one_key=0) — цифры копятся в буфер, по '#' уходит весь PIN одним кадром;
+ *  CHAR  (one_key=1) — каждая клавиша (вкл. '*' и '#') уходит немедленно. */
+static uint8_t g_pin_one_key = 1u;
 
 typedef struct {
     GPIO_TypeDef *port;
@@ -62,40 +61,38 @@ static uint8_t  g_pin_len[WIEGAND_READERS_COUNT];
 static uint32_t g_pin_idle_ms[WIEGAND_READERS_COUNT];
 
 
-static uint8_t wiegand_parity_ok_26(uint64_t bits)
+/* Divider (половина поля данных) для parity-форматов Wiegand.
+ * Возврат 0 = формат без чётности */
+static uint8_t wiegand_parity_divider(uint8_t bit_count)
+{
+    switch (bit_count) {
+    case 26u: return 12u;   /* 24 data + 2 parity */
+    case 34u: return 16u;   /* 32 data + 2 parity */
+    case 42u: return 20u;   /* 40 data + 2 parity */
+    default:  return 0u;    /* 32, 40, 56 — без чётности */
+    }
+}
+
+/* Проверка чётности parity-форматов.
+ * Кадр: [Peven = MSB][data: 2*divider бит][Podd = LSB]. */
+static uint8_t wiegand_parity_ok(uint64_t bits, uint8_t bit_count, uint8_t divider)
 {
     uint8_t i;
-    uint8_t p_even = (uint8_t)((bits >> 25u) & 1u);
+    uint8_t p_even = (uint8_t)((bits >> (uint8_t)(bit_count - 1u)) & 1u);
     uint8_t p_odd  = (uint8_t)(bits & 1u);
     uint8_t cnt_even = 0u;
     uint8_t cnt_odd  = 0u;
 
-    for (i = 13u; i <= 24u; ++i) {
-        cnt_even ^= (uint8_t)((bits >> i) & 1u);
-    }
-    for (i = 1u; i <= 12u; ++i) {
+    /* нижняя половина данных: биты 1..divider (odd parity) */
+    for (i = 1u; i <= divider; ++i) {
         cnt_odd ^= (uint8_t)((bits >> i) & 1u);
+    }
+    /* верхняя половина данных: биты divider+1..2*divider (even parity) */
+    for (i = (uint8_t)(divider + 1u); i <= (uint8_t)(2u * divider); ++i) {
+        cnt_even ^= (uint8_t)((bits >> i) & 1u);
     }
 
     /* even parity: p_even XOR data = 0; odd parity: p_odd XOR data = 1 */
-    return (p_even == cnt_even) && (p_odd != cnt_odd);
-}
-
-static uint8_t wiegand_parity_ok_34(uint64_t bits)
-{
-    uint8_t i;
-    uint8_t p_even   = (uint8_t)((bits >> 33u) & 1u);
-    uint8_t p_odd    = (uint8_t)(bits & 1u);
-    uint8_t cnt_even = 0u;
-    uint8_t cnt_odd  = 0u;
-
-    for (i = 17u; i <= 32u; ++i) {
-        cnt_even ^= (uint8_t)((bits >> i) & 1u);
-    }
-    for (i = 1u; i <= 16u; ++i) {
-        cnt_odd ^= (uint8_t)((bits >> i) & 1u);
-    }
-
     return (p_even == cnt_even) && (p_odd != cnt_odd);
 }
 
@@ -140,10 +137,12 @@ static uint8_t wiegand_try_decode_keypad(uint8_t bit_count, uint64_t bits, uint8
 
 static void wiegand_keypad_handle(uint8_t reader, uint8_t key)
 {
-#if WIEGAND_PIN_MODE == WIEGAND_PIN_MODE_CHAR
-    osdp_enqueue_keypad(reader, &key, 1u);
-    g_pin_idle_ms[reader] = 0u;
-#else
+    if (g_pin_one_key) {
+        osdp_enqueue_keypad(reader, &key, 1u);
+        g_pin_idle_ms[reader] = 0u;
+        return;
+    }
+
     if (key <= 9u) {
         if (g_pin_len[reader] < WIEGAND_PIN_MAX) {
             g_pin_buf[reader][g_pin_len[reader]] = key;
@@ -160,7 +159,17 @@ static void wiegand_keypad_handle(uint8_t reader, uint8_t key)
         g_pin_len[reader] = 0u;
         g_pin_idle_ms[reader] = 0u;
     }
-#endif
+}
+
+void wiegand_set_pin_mode(uint8_t one_key)
+{
+    uint8_t r;
+    g_pin_one_key = (uint8_t)(one_key != 0u);
+    /* смена режима — недобранный PIN сбрасываем на обоих ридерах */
+    for (r = 0u; r < WIEGAND_READERS_COUNT; ++r) {
+        g_pin_len[r] = 0u;
+        g_pin_idle_ms[r] = 0u;
+    }
 }
 
 static uint8_t wiegand_is_supported_length(uint8_t bits)
@@ -230,8 +239,8 @@ static void wiegand_push_reader_frame(uint8_t reader)
         }
     }
 
-    if ((bit_count == 26u && !wiegand_parity_ok_26(bits)) ||
-        (bit_count == 34u && !wiegand_parity_ok_34(bits))) {
+    uint8_t divider = wiegand_parity_divider(bit_count);
+    if (divider != 0u && !wiegand_parity_ok(bits, bit_count, divider)) {
         g_readers[reader].cooldown_ms_left = 0u;
         return;
     }
@@ -247,10 +256,11 @@ static void wiegand_push_reader_frame(uint8_t reader)
     g_pin_idle_ms[reader] = 0u;
 
     /* Снимаем биты чётности Wiegand (лид+хвост) -> чистые данные карты.
-     * 26->24 (facility8+card16), 34->32 (UID32). Результат байт-выровнен,
-     * что корректно парсится приёмником без потерь на floor(bits/8). */
-    if (bit_count == 26u || bit_count == 34u) {
-        uint8_t data_bits = (uint8_t)(bit_count - 2u);
+     * 26->24, 34->32, 42->40. Результат байт-выровнен, корректно парсится
+     * приёмником без потерь на floor(bits/8). No-parity длины (32,40,56)
+     * идут как есть — весь кадр и есть номер. */
+    if (divider != 0u) {
+        uint8_t data_bits = (uint8_t)(2u * divider);
         bits = (bits >> 1u) & ((((uint64_t)1u) << data_bits) - 1u);
         bit_count = data_bits;
     }

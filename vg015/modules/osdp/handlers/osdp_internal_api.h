@@ -30,4 +30,7 @@ int osdp_vendor_is_prs(const uint8_t *vendor);
 osdp_mfg_result_t osdp_handle_mfg(const uint8_t *data, uint16_t data_len);
 uint32_t osdp_get_baud(void);
 
+/* MFG CHGPINMOD: переключить режим выдачи PIN (one_key: 1=CHAR, 0=WHOLE). */
+void osdp_set_pin_mode(uint8_t one_key);
+
 #endif

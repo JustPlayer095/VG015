@@ -10,6 +10,7 @@
 #include "../port/osdp_port.h"
 #include "../state/osdp_context.h"
 
+#include "../../wiegand/wiegand.h"
 #include "../../../device/include/K1921VG015.h"
 #include "../../../device/include/system_k1921vg015.h"
 #include "../../config/config.h"
@@ -620,6 +621,12 @@ osdp_mfg_result_t osdp_handle_mfg(const uint8_t *data, uint16_t data_len)
         return osdp_mfg_result_ok;
     }
     return osdp_mfg_result_invalid;
+}
+
+/* MFG CHGPINMOD: переключить режим выдачи PIN (volatile, не хранится в NV). */
+void osdp_set_pin_mode(uint8_t one_key)
+{
+    wiegand_set_pin_mode(one_key);
 }
 
 static bool app_flash_wait_ready(uint32_t loops)

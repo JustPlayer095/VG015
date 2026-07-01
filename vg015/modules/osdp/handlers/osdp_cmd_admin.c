@@ -36,6 +36,12 @@ osdp_intent_t osdp_handle_cmd_admin(uint8_t cmd, uint8_t seq, const uint8_t *dat
             intent.baud = osdp_get_baud();
             return intent;
         }
+        /* CHGPINMOD: 'PRS' | 0x27 | pin_only | one_key. Берём one_key (WHOLE/CHAR). */
+        if (data_len == 6u && osdp_vendor_is_prs(data) && data[3] == osdp_MFG_CHGPINMOD) {
+            osdp_set_pin_mode(data[5]);
+            if (should_reply) osdp_build_and_send_ack(seq);
+            return intent;
+        }
         {
             osdp_mfg_result_t res = osdp_handle_mfg(data, data_len);
             if (should_reply) {

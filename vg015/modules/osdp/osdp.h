@@ -16,6 +16,7 @@ enum {
 	osdp_FILETRANSFER = 0x7C,
 	// manufacturer specific
 	osdp_MFG     = 0x80,
+	osdp_MFG_CHGPINMOD  = 0x27,
 	// коды ответов
 	osdp_ACK     = 0x40,
 	osdp_NAK     = 0x41,
