@@ -399,6 +399,7 @@ void osdp_handle_out(const uint8_t *data, uint16_t data_len)
             continue;
         }
 
+        InterruptDisable();
         switch (code) {
         case 0x01:
             g_runtime_ctx.output_ctrl[idx].permanent_state = 0;
@@ -455,6 +456,7 @@ void osdp_handle_out(const uint8_t *data, uint16_t data_len)
         default:
             break;
         }
+        InterruptEnable();
     }
 }
 
@@ -511,6 +513,7 @@ void osdp_handle_led(const uint8_t *data, uint16_t data_len)
             continue;
         }
 
+        InterruptDisable();
         if (pcode == 0x01) {
             uint32_t on = (uint32_t)pOn * 100u;
             uint32_t off = (uint32_t)pOff * 100u;
@@ -585,6 +588,7 @@ void osdp_handle_led(const uint8_t *data, uint16_t data_len)
             }
             g_runtime_ctx.led_ctrl.temp_active = 1u;
         }
+        InterruptEnable();
     }
 }
 
