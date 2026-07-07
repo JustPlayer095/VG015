@@ -12,7 +12,7 @@
 
 - Never run `make`, VS Code build tasks, or any build/flash command — the user builds and tests firmware themselves.
 - No behavior change to the OSDP protocol itself: same parser, same dispatch, same handlers, same reply bytes on the wire. Only *where* (interrupt vs. mainline) processing happens changes.
-- Don't touch `common/osdp/**` or `vg015/modules/osdp_port/**` — this plan only touches `vg015/main.c`. The parser/dispatch/handler pipeline (`osdp_on_rx_byte`) is reused as-is.
+- Task 1 touches only `vg015/main.c`; `common/osdp/**` and `vg015/modules/osdp_port/**` are out of scope for it. Task 2 (added after Task 1's final review surfaced a race Task 1 introduced) is the sole, explicit exception — it touches exactly `common/osdp/runtime/osdp_runtime.c`, nothing else in `common/`.
 - Byte loss under sustained overflow is acceptable (matches existing OSDP behavior — a corrupted/incomplete frame fails CRC and is dropped by the parser already); silently corrupting or reordering bytes is not.
 
 ---
@@ -166,3 +166,134 @@ Ask the user to build and flash the `vg015` app to the K1921VG015 debug board (V
 - Wiegand output timing and LED blink phases stay correct *while* OSDP traffic is active (this is the actual regression risk this plan protects against — a slow handler blocking the 1ms tick — even though nothing in this plan yet makes any handler slow; this test establishes the baseline before Phase B/C add slower handlers).
 
 Do not run any build/flash command yourself. If the user reports a regression, most likely causes to check first: ring buffer size too small for burst traffic (increase `OSDP_RX_BUF_SIZE`), or `osdp_rx_drain()` not being reached often enough (confirm nothing in `periph_init()` or elsewhere now blocks before reaching the `while(1)` loop).
+
+---
+
+### Task 2: Guard output/LED state updates against tick preemption
+
+**Why this task exists:** Task 1's final review found that before this plan, `osdp_handle_out()`/`osdp_handle_led()` ran inside the UART RX ISR, where interrupts on this core are non-nested (`MSTATUS.MIE` stays 0 for the ISR's whole duration) — so the 1ms tick (`tmr32_irq_handler` → `osdp_runtime_tick_1ms()`) could never preempt them mid-update, even though nothing enforced that on purpose. Task 1 moved these handlers to mainline (interrupts enabled), which removes that accidental protection: the tick can now preempt a handler between two writes to the same `output_ctrl[idx]` or `led_ctrl` struct, observing a transient inconsistent state (e.g. `temp_active=1` with a stale `timer_ms_left`) and driving a spurious output/LED transition that later self-corrects. This is reachable from `osdp_OUT` (can drive real relays), so it's fixed now rather than deferred.
+
+**Files:**
+- Modify: `common/osdp/runtime/osdp_runtime.c` (functions `osdp_handle_out` at line 382, `osdp_handle_led` at line 486 — line numbers as of this plan's writing; if they've drifted, locate by function name)
+
+**Interfaces:**
+- Consumes: `InterruptDisable(void)` / `InterruptEnable(void)` — already declared via the file's existing `#include ".../system_k1921vg015.h"` (line 14) and already used elsewhere in this same file (lines 281-344, guarding the card-event queue) for exactly this kind of critical section. No new include needed.
+- Produces: no new symbols; behavior-only change (adds mutual exclusion, doesn't change any wire-visible reply or output sequencing under normal, non-preempted operation).
+
+- [ ] **Step 1: Confirm the current code matches what this task expects**
+
+```bash
+grep -n "InterruptDisable\|InterruptEnable" common/osdp/runtime/osdp_runtime.c
+```
+Expected: hits at lines 281, 298, 310, 327, 335, 337, 344 (the existing card-queue guards) and nowhere yet inside `osdp_handle_out`/`osdp_handle_led`. If `osdp_handle_out`/`osdp_handle_led` already contain `InterruptDisable`/`InterruptEnable` calls, stop and report — this task has already been done or the file has diverged from this plan.
+
+- [ ] **Step 2: Guard the per-record switch in `osdp_handle_out`**
+
+Inside the `for (n = 0; n < count; ++n) { ... }` loop, currently:
+
+```c
+        if (idx >= 4u) {
+            continue;
+        }
+
+        switch (code) {
+        case 0x01:
+```
+
+becomes:
+
+```c
+        if (idx >= 4u) {
+            continue;
+        }
+
+        InterruptDisable();
+        switch (code) {
+        case 0x01:
+```
+
+and the closing brace of that same `switch` statement, currently:
+
+```c
+        default:
+            break;
+        }
+    }
+}
+```
+
+(this closes: the `default` case, the `switch`, the `for` loop, and the function — all at once, at the end of `osdp_handle_out`) becomes:
+
+```c
+        default:
+            break;
+        }
+        InterruptEnable();
+    }
+}
+```
+
+- [ ] **Step 3: Guard the per-record update in `osdp_handle_led`**
+
+Inside the `for (rec = 0; rec < count; ++rec) { ... }` loop, currently:
+
+```c
+        if (!(p[0] == 0u && p[1] == 0u)) {
+            continue;
+        }
+
+        if (pcode == 0x01) {
+```
+
+becomes:
+
+```c
+        if (!(p[0] == 0u && p[1] == 0u)) {
+            continue;
+        }
+
+        InterruptDisable();
+        if (pcode == 0x01) {
+```
+
+and the end of the `tcode == 0x02` branch, currently:
+
+```c
+            g_runtime_ctx.led_ctrl.temp_active = 1u;
+        }
+    }
+}
+```
+
+(closes: the `else if (tcode == 0x02)` branch, the `for` loop, and the function) becomes:
+
+```c
+            g_runtime_ctx.led_ctrl.temp_active = 1u;
+        }
+        InterruptEnable();
+    }
+}
+```
+
+- [ ] **Step 4: Grep-verify both guards landed and nothing else in the file changed**
+
+```bash
+grep -n "InterruptDisable\|InterruptEnable" common/osdp/runtime/osdp_runtime.c
+```
+Expected: the original 7 hits (lines may shift slightly from the two new insertions above them) plus exactly 2 new `InterruptDisable()`/`InterruptEnable()` pairs — one pair inside `osdp_handle_out`, one pair inside `osdp_handle_led`. Count: 11 total lines mentioning `InterruptDisable`/`InterruptEnable` (7 existing + 4 new, since each new pair is 2 lines).
+
+```bash
+git diff --stat
+```
+Expected: exactly one file changed, `common/osdp/runtime/osdp_runtime.c`, with 4 insertions (2 `InterruptDisable();` + 2 `InterruptEnable();` lines) and 0 deletions.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add common/osdp/runtime/osdp_runtime.c
+git commit -m "fix(osdp): guard output/LED state updates against 1ms-tick preemption"
+```
+
+- [ ] **Step 6: User build + hardware verification**
+
+Ask the user to build and flash the `vg015` app and confirm `osdp_OUT` and `osdp_LED` commands still behave exactly as before (no observable change expected — this task only closes a race window that required an unlucky ~microsecond-scale timing coincidence with the 1ms tick to ever manifest; there is no functional change to verify beyond "outputs and LEDs still work correctly"). Do not run any build/flash command yourself.
