@@ -40,5 +40,6 @@
     "${workspaceFolder}/vg015/modules/gpio",
     "${workspaceFolder}/vg015/device/include",
     "${workspaceFolder}/vg015/plib/inc"
-  ]
+  ],
+  "vg015-tools.appDir": "vg015"
 }

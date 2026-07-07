@@ -8,12 +8,16 @@
 #define WIEGAND_READERS_COUNT 2u
 #define WIEGAND_FRAME_TIMEOUT_MS 20u
 #define WIEGAND_MAX_BITS 56u
-#define WIEGAND_COOLDOWN_MS 3000u
+#define WIEGAND_CARD_BLOCK_MS 3000u
 #define WIEGAND_OVERFLOW_COOLDOWN_MS 5u
-//#define WIEGAND_HW_TEST_ENABLE 1u
-#define WIEGAND_TEST_PULSE_LOW_MS 2u
-#define WIEGAND_TEST_PULSE_GAP_MS 2u
-#define WIEGAND_TEST_FRAME_GAP_MS 250u
+#define WIEGAND_PIN_MAX 8u            /* макс. цифр PIN (ограничено data[8] в OSDP-событии) */
+#define WIEGAND_PIN_TIMEOUT_MS 10000u /* сброс недобранного PIN по простою */
+
+/* Режим передачи PIN от МК к ПК по OSDP (runtime, задаётся клиентом по MFG
+ * CHGPINMOD; volatile — не хранится, дефолт CHAR):
+ *  WHOLE (one_key=0) — цифры копятся в буфер, по '#' уходит весь PIN одним кадром;
+ *  CHAR  (one_key=1) — каждая клавиша (вкл. '*' и '#') уходит немедленно. */
+static uint8_t g_pin_one_key = 0u;
 
 typedef struct {
     GPIO_TypeDef *port;
@@ -27,7 +31,8 @@ typedef struct {
     uint8_t bit_count;
     uint32_t last_bit_ms;
     uint8_t frame_active;
-    uint32_t cooldown_ms_left;
+    uint32_t cooldown_ms_left;    /* короткий gate приёма бит: только overflow-шум */
+    uint32_t card_block_ms_left;  /* анти-повтор карты, проверяется на финале кадра */
 } wiegand_reader_state_t;
 
 static const wiegand_line_t g_lines[] = {
@@ -40,176 +45,131 @@ static const wiegand_line_t g_lines[] = {
 /* 0 = принимать любую поддерживаемую длину */
 static const uint8_t g_reader_expected_bits[WIEGAND_READERS_COUNT] = { 0u, 0u };
 
-static wiegand_reader_state_t g_readers[WIEGAND_READERS_COUNT];
+/* Состояние делится между двумя IRQ-контекстами: GPIO IRQ (wiegand_on_bit)
+ * пишет bits/bit_count/last_bit_ms, TMR32 IRQ (wiegand_tick_1ms /
+ * wiegand_push_reader_frame) финализирует кадр и ведёт таймеры. volatile
+ * защищает от кэширования полей компилятором; атомарность доступа держится
+ * на том, что прерывания не вложенные и не перебивают друг друга. Если
+ * включить nested interrupts — потребуются критические секции вокруг
+ * финализации кадра. */
 
-#if WIEGAND_HW_TEST_ENABLE
-typedef struct {
-    GPIO_TypeDef *port;
-    uint32_t pin;
-} wiegand_test_out_t;
+static volatile wiegand_reader_state_t g_readers[WIEGAND_READERS_COUNT];
 
-typedef struct {
-    const uint8_t *bits;
-    uint8_t bit_count;
-} wiegand_test_frame_t;
+/* Накопитель PIN на ридер: цифры копятся до '#'. */
+static uint8_t  g_pin_buf[WIEGAND_READERS_COUNT][WIEGAND_PIN_MAX];
+static uint8_t  g_pin_len[WIEGAND_READERS_COUNT];
+static uint32_t g_pin_idle_ms[WIEGAND_READERS_COUNT];
 
-typedef struct {
-    uint8_t reader;
-    uint8_t bit_pos;
-    uint8_t phase_low;
-    uint32_t phase_ms_left;
-    uint32_t frame_gap_ms_left;
-} wiegand_test_state_t;
 
-/* Подключить перемычками:
- * PB8 -> R0_W0 (PB12), PB9 -> R0_W1 (PB13), PB10 -> R1_W0 (PB14), PB11 -> R1_W1 (PB15)
- */
-static const wiegand_test_out_t g_test_out_w0[WIEGAND_READERS_COUNT] = {
-    { GPIOB, GPIO_Pin_8 },
-    { GPIOB, GPIO_Pin_10 }
-};
-
-static const wiegand_test_out_t g_test_out_w1[WIEGAND_READERS_COUNT] = {
-    { GPIOB, GPIO_Pin_9 },
-    { GPIOB, GPIO_Pin_11 }
-};
-
-/* Тестовые последовательности:
- * reader 0 -> 26 бит
- * reader 1 -> 34 бита
- */
-static const uint8_t g_test_bits_r0_26[] = {
-    1,0,1,0,0,1,1,0, 1,1,0,0,1,0,1,1, 0,1,1,0,1,0,0,1, 1,0
-};
-
-static const uint8_t g_test_bits_r1_34[] = {
-    1,1,0,1,0,0,1,1, 0,1,0,1,1,0,0,1, 1,0,1,0,1,1,0,0, 1,0,1,1,0,1,0,0, 1,1
-};
-
-static const wiegand_test_frame_t g_test_frames[WIEGAND_READERS_COUNT] = {
-    { g_test_bits_r0_26, (uint8_t)sizeof(g_test_bits_r0_26) },
-    { g_test_bits_r1_34, (uint8_t)sizeof(g_test_bits_r1_34) }
-};
-
-static wiegand_test_state_t g_test_state;
-
-static void wiegand_test_set_idle_high(uint8_t reader)
+/* Divider (половина поля данных) для parity-форматов Wiegand.
+ * Возврат 0 = формат без чётности */
+static uint8_t wiegand_parity_divider(uint8_t bit_count)
 {
-    GPIO_SetBits(g_test_out_w0[reader].port, g_test_out_w0[reader].pin);
-    GPIO_SetBits(g_test_out_w1[reader].port, g_test_out_w1[reader].pin);
+    switch (bit_count) {
+    case 26u: return 12u;   /* 24 data + 2 parity */
+    case 34u: return 16u;   /* 32 data + 2 parity */
+    case 42u: return 20u;   /* 40 data + 2 parity */
+    default:  return 0u;    /* 32, 40, 56 — без чётности */
+    }
 }
 
-static void wiegand_test_init(void)
+/* Проверка чётности parity-форматов.
+ * Кадр: [Peven = MSB][data: 2*divider бит][Podd = LSB]. */
+static uint8_t wiegand_parity_ok(uint64_t bits, uint8_t bit_count, uint8_t divider)
 {
     uint8_t i;
-
-    for (i = 0u; i < WIEGAND_READERS_COUNT; ++i) {
-        GPIO_Init_TypeDef gpio;
-        GPIO_StructInit(&gpio);
-
-        gpio.Out = ENABLE;
-        gpio.AltFunc = DISABLE;
-        gpio.AltFuncNum = GPIO_AltFuncNum_None;
-        gpio.PullMode = GPIO_PullMode_Disable;
-        gpio.OutMode = GPIO_OutMode_PP;
-
-        gpio.Pin = g_test_out_w0[i].pin;
-        GPIO_Init(g_test_out_w0[i].port, &gpio);
-
-        gpio.Pin = g_test_out_w1[i].pin;
-        GPIO_Init(g_test_out_w1[i].port, &gpio);
-
-        wiegand_test_set_idle_high(i);
-    }
-
-    g_test_state.reader = 0u;
-    g_test_state.bit_pos = 0u;
-    g_test_state.phase_low = 0u;
-    g_test_state.phase_ms_left = WIEGAND_TEST_FRAME_GAP_MS;
-    g_test_state.frame_gap_ms_left = WIEGAND_TEST_FRAME_GAP_MS;
-}
-
-static void wiegand_test_tick_1ms(void)
-{
-    const wiegand_test_frame_t *frame;
-    uint8_t bit;
-    uint8_t reader = g_test_state.reader;
-
-    frame = &g_test_frames[reader];
-
-    if (g_test_state.frame_gap_ms_left > 0u) {
-        g_test_state.frame_gap_ms_left--;
-        return;
-    }
-
-    if (g_test_state.phase_ms_left > 0u) {
-        g_test_state.phase_ms_left--;
-        return;
-    }
-
-    if (g_test_state.bit_pos >= frame->bit_count) {
-        wiegand_test_set_idle_high(reader);
-        g_test_state.reader = (uint8_t)((reader + 1u) % WIEGAND_READERS_COUNT);
-        g_test_state.bit_pos = 0u;
-        g_test_state.phase_low = 0u;
-        g_test_state.frame_gap_ms_left = WIEGAND_TEST_FRAME_GAP_MS;
-        return;
-    }
-
-    bit = frame->bits[g_test_state.bit_pos];
-
-    if (!g_test_state.phase_low) {
-        if (bit == 0u) {
-            GPIO_ClearBits(g_test_out_w0[reader].port, g_test_out_w0[reader].pin);
-        } else {
-            GPIO_ClearBits(g_test_out_w1[reader].port, g_test_out_w1[reader].pin);
-        }
-        g_test_state.phase_low = 1u;
-        g_test_state.phase_ms_left = WIEGAND_TEST_PULSE_LOW_MS;
-    } else {
-        wiegand_test_set_idle_high(reader);
-        g_test_state.phase_low = 0u;
-        g_test_state.bit_pos++;
-        g_test_state.phase_ms_left = WIEGAND_TEST_PULSE_GAP_MS;
-    }
-}
-#endif
-
-static uint8_t wiegand_parity_ok_26(uint64_t bits)
-{
-    uint8_t i;
-    uint8_t p_even = (uint8_t)((bits >> 25u) & 1u);
+    uint8_t p_even = (uint8_t)((bits >> (uint8_t)(bit_count - 1u)) & 1u);
     uint8_t p_odd  = (uint8_t)(bits & 1u);
     uint8_t cnt_even = 0u;
     uint8_t cnt_odd  = 0u;
 
-    for (i = 13u; i <= 24u; ++i) {
-        cnt_even ^= (uint8_t)((bits >> i) & 1u);
-    }
-    for (i = 1u; i <= 12u; ++i) {
+    /* нижняя половина данных: биты 1..divider (odd parity) */
+    for (i = 1u; i <= divider; ++i) {
         cnt_odd ^= (uint8_t)((bits >> i) & 1u);
+    }
+    /* верхняя половина данных: биты divider+1..2*divider (even parity) */
+    for (i = (uint8_t)(divider + 1u); i <= (uint8_t)(2u * divider); ++i) {
+        cnt_even ^= (uint8_t)((bits >> i) & 1u);
     }
 
     /* even parity: p_even XOR data = 0; odd parity: p_odd XOR data = 1 */
     return (p_even == cnt_even) && (p_odd != cnt_odd);
 }
 
-static uint8_t wiegand_parity_ok_34(uint64_t bits)
+/* Короткий кадр клавиатуры ридера.
+ *  HID (Parsec)   : 6 бит, [Pлид][4 данных][Pхвост]; средний ниббл = код клавиши.
+ *  Indala/Motorola: 8 бит, старший ниббл = ~младший (контроль), клавиша = младший.
+ * Кодировка ниббла (станд. HID): 0-9 = 0b0000..0b1001, '*' = 0b1010, '#' = 0b1011. */
+static uint8_t wiegand_try_decode_keypad(uint8_t bit_count, uint64_t bits, uint8_t *out_key)
 {
-    uint8_t i;
-    uint8_t p_even   = (uint8_t)((bits >> 33u) & 1u);
-    uint8_t p_odd    = (uint8_t)(bits & 1u);
-    uint8_t cnt_even = 0u;
-    uint8_t cnt_odd  = 0u;
+    uint8_t key;
 
-    for (i = 17u; i <= 32u; ++i) {
-        cnt_even ^= (uint8_t)((bits >> i) & 1u);
-    }
-    for (i = 1u; i <= 16u; ++i) {
-        cnt_odd ^= (uint8_t)((bits >> i) & 1u);
+    if (bit_count == 6u) {           /* Parsec HID: [Pлид][4 данных][Pхвост] */
+        uint8_t plead = (uint8_t)((bits >> 5u) & 1u);
+        uint8_t ptail = (uint8_t)(bits & 1u);
+        uint8_t data     = (uint8_t)((bits >> 1u) & 0x0Fu);
+        uint8_t exp_lead = (uint8_t)(((data >> 3u) & 1u) ^ ((data >> 2u) & 1u));
+        uint8_t exp_tail = (uint8_t)(((data >> 1u) & 1u) ^ (data & 1u) ^ 1u);
+        if (plead != exp_lead || ptail != exp_tail) {
+            return 0u;                /* чётность не сошлась -> брак */
+        }
+        key = data;
+    } else if (bit_count == 8u) {     /* Indala/Motorola */
+        uint8_t hi = (uint8_t)((bits >> 4u) & 0x0Fu);
+        uint8_t lo = (uint8_t)(bits & 0x0Fu);
+        if (((hi ^ lo) & 0x0Fu) != 0x0Fu) {
+            return 0u;                /* инверсия не сошлась -> брак */
+        }
+        key = lo;
+    } else if (bit_count == 4){
+        key = (uint8_t)(bits & 0x0Fu);
+    } else {
+        return 0u;
     }
 
-    return (p_even == cnt_even) && (p_odd != cnt_odd);
+    if (key > 0x0Bu) {                /* 0xC..0xF недопустимы */
+        return 0u;
+    }
+
+    *out_key = key;
+    return 1u;
+}
+
+static void wiegand_keypad_handle(uint8_t reader, uint8_t key)
+{
+    if (g_pin_one_key) {
+        osdp_enqueue_keypad(reader, &key, 1u);
+        g_pin_idle_ms[reader] = 0u;
+        return;
+    }
+
+    if (key <= 9u) {
+        if (g_pin_len[reader] < WIEGAND_PIN_MAX) {
+            g_pin_buf[reader][g_pin_len[reader]] = key;
+            g_pin_len[reader]++;
+        }
+        g_pin_idle_ms[reader] = 0u;
+    } else if (key == 0x0Au) {            /* '*' сброс */
+        g_pin_len[reader] = 0u;
+        g_pin_idle_ms[reader] = 0u;
+    } else if (key == 0x0Bu) {            /* '#' завершение */
+        if (g_pin_len[reader] > 0u) {
+            osdp_enqueue_keypad(reader, g_pin_buf[reader], g_pin_len[reader]);
+        }
+        g_pin_len[reader] = 0u;
+        g_pin_idle_ms[reader] = 0u;
+    }
+}
+
+void wiegand_set_pin_mode(uint8_t one_key)
+{
+    uint8_t r;
+    g_pin_one_key = (uint8_t)(one_key != 0u);
+    /* смена режима — недобранный PIN сбрасываем на обоих ридерах */
+    for (r = 0u; r < WIEGAND_READERS_COUNT; ++r) {
+        g_pin_len[r] = 0u;
+        g_pin_idle_ms[r] = 0u;
+    }
 }
 
 static uint8_t wiegand_is_supported_length(uint8_t bits)
@@ -233,7 +193,10 @@ static void wiegand_reset_reader(uint8_t reader)
     g_readers[reader].bit_count = 0u;
     g_readers[reader].last_bit_ms = 0u;
     g_readers[reader].frame_active = 0u;
-    g_readers[reader].cooldown_ms_left = WIEGAND_COOLDOWN_MS;
+    g_readers[reader].cooldown_ms_left = 0u;
+    g_readers[reader].card_block_ms_left = 0u;
+    g_pin_len[reader] = 0u;
+    g_pin_idle_ms[reader] = 0u;
 }
 
 static void wiegand_push_reader_frame(uint8_t reader)
@@ -254,7 +217,14 @@ static void wiegand_push_reader_frame(uint8_t reader)
     g_readers[reader].bit_count = 0u;
     g_readers[reader].last_bit_ms = 0u;
     g_readers[reader].frame_active = 0u;
-    g_readers[reader].cooldown_ms_left = WIEGAND_COOLDOWN_MS;
+
+    /* Короткий кадр -> код клавиши. Перехватываем до проверок длины карты.
+     * Клавиши не подпадают под анти-повтор карты — проходят всегда (в т.ч. сразу после карты). */
+    uint8_t key;
+    if (wiegand_try_decode_keypad(bit_count, bits, &key)) {
+        wiegand_keypad_handle(reader, key);
+        return;
+    }
 
     {
         uint8_t expected = g_reader_expected_bits[reader];
@@ -269,13 +239,37 @@ static void wiegand_push_reader_frame(uint8_t reader)
         }
     }
 
-    if ((bit_count == 26u && !wiegand_parity_ok_26(bits)) ||
-        (bit_count == 34u && !wiegand_parity_ok_34(bits))) {
+    uint8_t divider = wiegand_parity_divider(bit_count);
+    if (divider != 0u && !wiegand_parity_ok(bits, bit_count, divider)) {
         g_readers[reader].cooldown_ms_left = 0u;
         return;
     }
 
+    /* Анти-повтор карты: дубль в окне WIEGAND_CARD_BLOCK_MS гасим. */
+    if (g_readers[reader].card_block_ms_left > 0u) {
+        return;
+    }
+    g_readers[reader].card_block_ms_left = WIEGAND_CARD_BLOCK_MS;
+
+    /* новая карта — начинаем PIN-сессию заново */
+    g_pin_len[reader] = 0u;
+    g_pin_idle_ms[reader] = 0u;
+
+    /* Снимаем биты чётности Wiegand (лид+хвост) -> чистые данные карты.
+     * 26->24, 34->32, 42->40. Результат байт-выровнен, корректно парсится
+     * приёмником без потерь на floor(bits/8). No-parity длины (32,40,56)
+     * идут как есть — весь кадр и есть номер. */
+    if (divider != 0u) {
+        uint8_t data_bits = (uint8_t)(2u * divider);
+        bits = (bits >> 1u) & ((((uint64_t)1u) << data_bits) - 1u);
+        bit_count = data_bits;
+    }
+
     bytes = (uint8_t)((bit_count + 7u) / 8u);
+
+    /* OSDP RAW: биты лево-выровнены (1-й бит данных = MSB байта 0),
+     * хвостовые незанятые биты = 0. */
+    bits <<= (uint8_t)(bytes * 8u - bit_count);
 
     for (i = 0u; i < bytes; ++i) {
         payload[(bytes - 1u) - i] = (uint8_t)(bits & 0xFFu);
@@ -323,7 +317,6 @@ void wiegand_init(void)
 
     for (i = 0u; i < WIEGAND_READERS_COUNT; ++i) {
         wiegand_reset_reader(i);
-        g_readers[i].cooldown_ms_left = 0u;
     }
 
     /* 3 samples × 50 ticks × 20ns = 3µs glitch filter at 50MHz.
@@ -351,9 +344,6 @@ void wiegand_init(void)
         GPIO_ITCmd(g_lines[i].port, g_lines[i].pin, ENABLE);
     }
 
-#if WIEGAND_HW_TEST_ENABLE
-    wiegand_test_init();
-#endif
 }
 
 void wiegand_gpio_irq_handler(void)
@@ -378,6 +368,16 @@ void wiegand_tick_1ms(void)
         if (g_readers[i].cooldown_ms_left > 0u) {
             g_readers[i].cooldown_ms_left--;
         }
+        if (g_readers[i].card_block_ms_left > 0u) {
+            g_readers[i].card_block_ms_left--;
+        }
+        if (g_pin_len[i] > 0u) {
+            g_pin_idle_ms[i]++;
+            if (g_pin_idle_ms[i] >= WIEGAND_PIN_TIMEOUT_MS) {
+                g_pin_len[i] = 0u;          /* недобранный PIN протух — сброс */
+                g_pin_idle_ms[i] = 0u;
+            }
+        }
 
         if (!g_readers[i].frame_active || g_readers[i].cooldown_ms_left > 0u) {
             continue;
@@ -387,8 +387,4 @@ void wiegand_tick_1ms(void)
             wiegand_push_reader_frame(i);
         }
     }
-
-#if WIEGAND_HW_TEST_ENABLE
-    wiegand_test_tick_1ms();
-#endif
 }

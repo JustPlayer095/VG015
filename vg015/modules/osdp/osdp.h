@@ -16,10 +16,12 @@ enum {
 	osdp_FILETRANSFER = 0x7C,
 	// manufacturer specific
 	osdp_MFG     = 0x80,
+	osdp_MFG_CHGPINMOD  = 0x27,
 	// коды ответов
 	osdp_ACK     = 0x40,
 	osdp_NAK     = 0x41,
 	osdp_RAW     = 0x50,
+	osdp_KEYPAD  = 0x53,
 	osdp_ISTATR  = 0x49,
 	osdp_OSTATR  = 0x4A,
 	osdp_PDCAP   = 0x46,
@@ -42,6 +44,10 @@ void osdp_on_rx_byte(uint8_t byte);
 // Вызывать раз в 1 мс (из таймера) для временного управления LED
 void osdp_tick_1ms(void);
 void osdp_enqueue_raw_card(uint8_t reader_no, uint8_t bit_count, const uint8_t *data, uint8_t data_len);
+/* keys: массив цифр PIN (0-9), count штук. Отправляется одним REPLY 0x53. */
+void osdp_enqueue_keypad(uint8_t reader_no, const uint8_t *keys, uint8_t count);
+/* Тест: принудительно выставить все выходы PD (PA4-7) в on/off (локальный доступ). */
+void osdp_set_outputs(uint8_t on);
 
 #endif
 

@@ -39,12 +39,16 @@ $compilerPath
     exit 1
 }
 
+# busybox sh комплекта NIIET съедает бэкслэши ('\' = escape) — make должен
+# получить путь компилятора с форвард-слэшами, иначе Error 127 "not found".
+$compilerPathFwd = $env:COMPILER_PATH -replace '\\', '/'
+
 Push-Location -LiteralPath $WorkingDirectory
 try {
     $makeArgs = @(
         "-j8",
         "all",
-        "COMPILER_PATH=$($env:COMPILER_PATH)",
+        "COMPILER_PATH=$compilerPathFwd",
         "PREFIX=riscv64-unknown-elf-",
         "MARCH=rv32imfc_zicsr",
         "MABI=ilp32f",
