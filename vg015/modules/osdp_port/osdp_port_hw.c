@@ -1,11 +1,11 @@
-#include "osdp_port.h"
-#include "../../../device/Include/K1921VG015.h"
-#include "../../../device/include/system_k1921vg015.h"
-#include "../../../device/Include/retarget.h"
-#include "../../../plib/inc/plib015_gpio.h"
-#include "../../driver/w25q32/extflash_w25q32.h"
+#include "../../../common/osdp/port/osdp_port.h"
+#include "../../device/Include/K1921VG015.h"
+#include "../../device/include/system_k1921vg015.h"
+#include "../../device/Include/retarget.h"
+#include "../../plib/inc/plib015_gpio.h"
+#include "../driver/w25q32/extflash_w25q32.h"
 #include "../../update/update_flag.h"
-#include "../../timebase/timebase.h"
+#include "../timebase/timebase.h"
 
 #define UPDATE_FLAG_LED_MASK ((uint32_t)1u << 15)
 

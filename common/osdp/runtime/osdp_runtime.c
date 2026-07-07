@@ -10,12 +10,12 @@
 #include "../port/osdp_port.h"
 #include "../state/osdp_context.h"
 
-#include "../../wiegand/wiegand.h"
-#include "../../../device/include/K1921VG015.h"
-#include "../../../device/include/system_k1921vg015.h"
-#include "../../config/config.h"
-#include "../../driver/w25q32/extflash_w25q32.h"
-#include "../../update/update_flag.h"
+#include "../../../vg015/modules/wiegand/wiegand.h"
+#include "../../../vg015/device/include/K1921VG015.h"
+#include "../../../vg015/device/include/system_k1921vg015.h"
+#include "../../../vg015/modules/config/config.h"
+#include "../../../vg015/modules/driver/w25q32/extflash_w25q32.h"
+#include "../../../vg015/modules/update/update_flag.h"
 
 #define APP_FLASH_WAIT_ERASE_LOOPS ((uint32_t)2000000u)
 #define APP_FLASH_WAIT_WRITE_LOOPS ((uint32_t)200000u)
