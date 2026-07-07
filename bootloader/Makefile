@@ -24,10 +24,10 @@ OPTIMISATION ?=
 
 SRCS := ./src/bl_main.c \
         ./src/bl_hal.c \
-        ./src/bl_image.c \
         ./src/bl_crc32.c \
         ./src/bl_jump.c \
         ./src/bl_extflash_w25q32.c \
+        ../common/bootloader/bl_image.c \
         ../vg015/device/source/sys_init.c
 
 ASMS := ../vg015/device/source/startup_k1921vg015.S
@@ -35,7 +35,7 @@ ASMS := ../vg015/device/source/startup_k1921vg015.S
 OBJS := $(SRCS:.c=.o)
 OBJS += $(ASMS:.S=.o)
 
-INCLUDE_FOLDERS = -I"./include" -I"./src" -I"../vg015/device/include" -I"../vg015/plib/inc" -I"../vg015"
+INCLUDE_FOLDERS = -I"./include" -I"./src" -I"../common/bootloader" -I"../common/shared" -I"../vg015/device/include" -I"../vg015/plib/inc" -I"../vg015"
 OBJ_DIRS = $(sort $(dir $(OBJS)))
 OBJ_DIRS := $(patsubst ./%,%,$(OBJ_DIRS))
 

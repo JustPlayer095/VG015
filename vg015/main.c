@@ -5,7 +5,7 @@
 #include "device/include/plic.h"
 #include "device/include/retarget.h"
 #include "plib/inc/plib015_tmr32.h"
-#include "modules/osdp/osdp.h"
+#include "../common/osdp/osdp.h"
 #include "modules/timebase/timebase.h"
 #include "modules/wiegand/wiegand.h"
 #include <stdio.h>

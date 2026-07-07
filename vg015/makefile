@@ -26,16 +26,24 @@ BUILD_PATH  		:= ./$(BUILD_NAME)
 OPTIMISATION ?= -Os
 
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-	
+
+COMMON_DIR := ../common
+
 SRCS := $(call rwildcard,.,*.c)
 ASMS := $(call rwildcard,.,*.S)
 HEADERS := $(call rwildcard,.,*.h)
-	
-OBJS := $(SRCS:.c=.o)
+
+COMMON_SRCS := $(call rwildcard,$(COMMON_DIR)/osdp,*.c)
+COMMON_HEADERS := $(call rwildcard,$(COMMON_DIR)/osdp,*.h) $(call rwildcard,$(COMMON_DIR)/shared,*.h)
+HEADERS += $(COMMON_HEADERS)
+
 OBJS_SRC := $(SRCS:.c=.o)
 OBJS_SRC += $(ASMS:.S=.o)
 OBJS := $(addprefix $(BUILD_PATH)/,$(OBJS_SRC))
-	
+
+COMMON_OBJS := $(patsubst $(COMMON_DIR)/%.c,$(BUILD_PATH)/common/%.o,$(COMMON_SRCS))
+OBJS += $(COMMON_OBJS)
+
 INCLUDE_FOLDERS = $(foreach inc, $(sort $(dir $(HEADERS))), -I"$(inc)") -I"./device/Include" -I"./plib/inc" -I"."
 OBJ_DIRS := $(sort $(dir $(OBJS)))
 	
@@ -95,7 +103,17 @@ ifeq ($(OS), Windows_NT)
 else
 	@mkdir -p "$(dir $@)"
 endif
-	$(RISCV-GCC) $^ -o $@ 
+	$(RISCV-GCC) $^ -o $@
+	@ echo "...DONE"
+
+$(BUILD_PATH)/common/%.o: $(COMMON_DIR)/%.c
+	@ echo "COMPILE "$^""
+ifeq ($(OS), Windows_NT)
+	@if not exist "$(subst /,\,$(dir $@))" mkdir "$(subst /,\,$(dir $@))"
+else
+	@mkdir -p "$(dir $@)"
+endif
+	$(RISCV-GCC) $^ -o $@
 	@ echo "...DONE"
 	
 %.elf: $(OBJS)

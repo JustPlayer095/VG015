@@ -10,20 +10,12 @@
 #include "../port/osdp_port.h"
 #include "../state/osdp_context.h"
 
-#include "../../wiegand/wiegand.h"
-#include "../../../device/include/K1921VG015.h"
-#include "../../../device/include/system_k1921vg015.h"
-#include "../../config/config.h"
-#include "../../driver/w25q32/extflash_w25q32.h"
-#include "../../update/update_flag.h"
-
-#define APP_FLASH_WAIT_ERASE_LOOPS ((uint32_t)2000000u)
-#define APP_FLASH_WAIT_WRITE_LOOPS ((uint32_t)200000u)
-
-typedef struct {
-    uint32_t image_size;
-    uint32_t crc32;
-} bl_app_header_t;
+#include "../../../vg015/modules/wiegand/wiegand.h"
+#include "../../../vg015/device/include/system_k1921vg015.h" /* InterruptDisable/InterruptEnable only */
+#include "../../../vg015/modules/config/config.h"
+#include "../../../vg015/modules/driver/w25q32/extflash_w25q32.h"
+#include "../../shared/update_flag.h"
+#include "../../shared/bl_app_header.h"
 
 static osdp_context_t g_runtime_ctx;
 
@@ -625,55 +617,6 @@ void osdp_set_pin_mode(uint8_t one_key)
     wiegand_set_pin_mode(one_key);
 }
 
-static bool app_flash_wait_ready(uint32_t loops)
-{
-    while (loops > 0u) {
-        if ((FLASH->STAT & FLASH_STAT_BUSY_Msk) == 0u) {
-            return true;
-        }
-        --loops;
-    }
-    return false;
-}
-
-static uint32_t app_flash_offs(uint32_t abs_addr)
-{
-    return abs_addr - MEM_FLASH_BASE;
-}
-
-static bool app_flash_erase_page(uint32_t abs_addr)
-{
-    FLASH->ADDR = app_flash_offs(abs_addr);
-    FLASH->CMD = ((uint32_t)FLASH_CMD_KEY_Access << FLASH_CMD_KEY_Pos) | FLASH_CMD_ERSEC_Msk;
-    return app_flash_wait_ready(APP_FLASH_WAIT_ERASE_LOOPS);
-}
-
-static bool app_flash_write16(uint32_t abs_addr, const uint8_t *data16)
-{
-    uint32_t w0;
-    uint32_t w1;
-    uint32_t w2;
-    uint32_t w3;
-
-    if (!data16) {
-        return false;
-    }
-
-    w0 = (uint32_t)data16[0] | ((uint32_t)data16[1] << 8) | ((uint32_t)data16[2] << 16) | ((uint32_t)data16[3] << 24);
-    w1 = (uint32_t)data16[4] | ((uint32_t)data16[5] << 8) | ((uint32_t)data16[6] << 16) | ((uint32_t)data16[7] << 24);
-    w2 = (uint32_t)data16[8] | ((uint32_t)data16[9] << 8) | ((uint32_t)data16[10] << 16) | ((uint32_t)data16[11] << 24);
-    w3 = (uint32_t)data16[12] | ((uint32_t)data16[13] << 8) | ((uint32_t)data16[14] << 16) | ((uint32_t)data16[15] << 24);
-
-    FLASH->DATA[0].DATA = w0;
-    FLASH->DATA[1].DATA = w1;
-    FLASH->DATA[2].DATA = w2;
-    FLASH->DATA[3].DATA = w3;
-
-    FLASH->ADDR = app_flash_offs(abs_addr);
-    FLASH->CMD = ((uint32_t)FLASH_CMD_KEY_Access << FLASH_CMD_KEY_Pos) | FLASH_CMD_WR_Msk;
-    return app_flash_wait_ready(APP_FLASH_WAIT_WRITE_LOOPS);
-}
-
 static bool app_shared_flag_set_pending(uint32_t slot_base, uint32_t total_size, const bl_app_header_t *hdr)
 {
     update_flag_t f;
@@ -696,13 +639,13 @@ static bool app_shared_flag_set_pending(uint32_t slot_base, uint32_t total_size,
     memcpy(b0, ((const uint8_t *)&f), 16u);
     memcpy(b1, ((const uint8_t *)&f) + 16u, 16u);
 
-    if (!app_flash_erase_page(UPDATE_FLAG_ADDR_ABS)) {
+    if (!osdp_port_internal_flash_erase_page(UPDATE_FLAG_ADDR_ABS)) {
         return false;
     }
-    if (!app_flash_write16(UPDATE_FLAG_ADDR_ABS, b0)) {
+    if (!osdp_port_internal_flash_write16(UPDATE_FLAG_ADDR_ABS, b0)) {
         return false;
     }
-    if (!app_flash_write16(UPDATE_FLAG_ADDR_ABS + 16u, b1)) {
+    if (!osdp_port_internal_flash_write16(UPDATE_FLAG_ADDR_ABS + 16u, b1)) {
         return false;
     }
     update_flag_led_set(true);
