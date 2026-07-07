@@ -3,11 +3,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-
-typedef struct {
-    uint32_t image_size;
-    uint32_t crc32;
-} bl_app_header_t;
+#include "../shared/bl_app_header.h"
 
 bool bl_image_header_is_valid(const bl_app_header_t* hdr);
 bool bl_image_is_valid(void);

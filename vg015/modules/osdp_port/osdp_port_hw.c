@@ -4,7 +4,7 @@
 #include "../../device/Include/retarget.h"
 #include "../../plib/inc/plib015_gpio.h"
 #include "../driver/w25q32/extflash_w25q32.h"
-#include "../update/update_flag.h"
+#include "../../../common/shared/update_flag.h"
 #include "../timebase/timebase.h"
 
 #define UPDATE_FLAG_LED_MASK ((uint32_t)1u << 15)

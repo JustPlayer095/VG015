@@ -1,6 +1,6 @@
-#include "../include/bl_image.h"
-#include "../include/bl_config.h"
-#include "../include/bl_crc32.h"
+#include "bl_image.h"
+#include "bl_memmap.h"
+#include "bl_crc32.h"
 
 static const bl_app_header_t* bl_get_header(void) {
     return (const bl_app_header_t*)(uintptr_t)APP_HEADER_ADDR;

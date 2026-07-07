@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 // Общая 4К-страница внутренней Flash для флага.
-// По текущей разметке flash и bl_config.h:
+// По текущей разметке flash и bl_memmap.h:
 // - APP_END_ADDR = 0x800FF000
 // - значит последняя страница 0x800FF000..0x800FFFFF свободна для служебных данных.
 #define UPDATE_FLAG_ADDR_ABS          ((uint32_t)0x800FF000u)

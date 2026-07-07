@@ -15,15 +15,11 @@
 #include "../../../vg015/device/include/system_k1921vg015.h"
 #include "../../../vg015/modules/config/config.h"
 #include "../../../vg015/modules/driver/w25q32/extflash_w25q32.h"
-#include "../../../vg015/modules/update/update_flag.h"
+#include "../../shared/update_flag.h"
+#include "../../shared/bl_app_header.h"
 
 #define APP_FLASH_WAIT_ERASE_LOOPS ((uint32_t)2000000u)
 #define APP_FLASH_WAIT_WRITE_LOOPS ((uint32_t)200000u)
-
-typedef struct {
-    uint32_t image_size;
-    uint32_t crc32;
-} bl_app_header_t;
 
 static osdp_context_t g_runtime_ctx;
 
