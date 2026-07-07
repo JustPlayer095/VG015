@@ -135,3 +135,55 @@ bool osdp_port_extflash_read(uint32_t addr, uint8_t *data, uint16_t len)
 {
     return extflash_read(addr, data, (size_t)len);
 }
+
+#define OSDP_PORT_FLASH_WAIT_ERASE_LOOPS ((uint32_t)2000000u)
+#define OSDP_PORT_FLASH_WAIT_WRITE_LOOPS ((uint32_t)200000u)
+
+static bool osdp_port_flash_wait_ready(uint32_t loops)
+{
+    while (loops > 0u) {
+        if ((FLASH->STAT & FLASH_STAT_BUSY_Msk) == 0u) {
+            return true;
+        }
+        --loops;
+    }
+    return false;
+}
+
+static uint32_t osdp_port_flash_offs(uint32_t abs_addr)
+{
+    return abs_addr - MEM_FLASH_BASE;
+}
+
+bool osdp_port_internal_flash_erase_page(uint32_t abs_addr)
+{
+    FLASH->ADDR = osdp_port_flash_offs(abs_addr);
+    FLASH->CMD = ((uint32_t)FLASH_CMD_KEY_Access << FLASH_CMD_KEY_Pos) | FLASH_CMD_ERSEC_Msk;
+    return osdp_port_flash_wait_ready(OSDP_PORT_FLASH_WAIT_ERASE_LOOPS);
+}
+
+bool osdp_port_internal_flash_write16(uint32_t abs_addr, const uint8_t *data16)
+{
+    uint32_t w0;
+    uint32_t w1;
+    uint32_t w2;
+    uint32_t w3;
+
+    if (!data16) {
+        return false;
+    }
+
+    w0 = (uint32_t)data16[0] | ((uint32_t)data16[1] << 8) | ((uint32_t)data16[2] << 16) | ((uint32_t)data16[3] << 24);
+    w1 = (uint32_t)data16[4] | ((uint32_t)data16[5] << 8) | ((uint32_t)data16[6] << 16) | ((uint32_t)data16[7] << 24);
+    w2 = (uint32_t)data16[8] | ((uint32_t)data16[9] << 8) | ((uint32_t)data16[10] << 16) | ((uint32_t)data16[11] << 24);
+    w3 = (uint32_t)data16[12] | ((uint32_t)data16[13] << 8) | ((uint32_t)data16[14] << 16) | ((uint32_t)data16[15] << 24);
+
+    FLASH->DATA[0].DATA = w0;
+    FLASH->DATA[1].DATA = w1;
+    FLASH->DATA[2].DATA = w2;
+    FLASH->DATA[3].DATA = w3;
+
+    FLASH->ADDR = osdp_port_flash_offs(abs_addr);
+    FLASH->CMD = ((uint32_t)FLASH_CMD_KEY_Access << FLASH_CMD_KEY_Pos) | FLASH_CMD_WR_Msk;
+    return osdp_port_flash_wait_ready(OSDP_PORT_FLASH_WAIT_WRITE_LOOPS);
+}

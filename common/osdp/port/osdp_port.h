@@ -20,5 +20,7 @@ void osdp_port_inputs_init(void);   /* включить входы OSDP (PA0-3),
 bool osdp_port_extflash_erase_range_4k(uint32_t base, uint32_t size);
 bool osdp_port_extflash_write(uint32_t addr, const uint8_t *data, uint16_t len);
 bool osdp_port_extflash_read(uint32_t addr, uint8_t *data, uint16_t len);
+bool osdp_port_internal_flash_erase_page(uint32_t abs_addr);
+bool osdp_port_internal_flash_write16(uint32_t abs_addr, const uint8_t *data16);
 
 #endif
