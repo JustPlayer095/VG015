@@ -1,0 +1,13 @@
+If:
+  PathMatch: common/bootloader/.*\.c
+CompileFlags:
+  Add:
+    - -Ibootloader/include
+    - -Icommon/bootloader
+    - -Icommon/shared
+---
+If:
+  PathMatch: common/osdp/.*\.c
+CompileFlags:
+  Add:
+    - -Icommon/shared

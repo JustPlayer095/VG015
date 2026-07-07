@@ -2,7 +2,7 @@
 
 #include "../../device/include/K1921VG015.h"
 #include "../../plib/inc/plib015_gpio.h"
-#include "../osdp/osdp.h"
+#include "../../../common/osdp/osdp.h"
 #include "../timebase/timebase.h"
 
 #define WIEGAND_READERS_COUNT 2u

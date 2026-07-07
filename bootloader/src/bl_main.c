@@ -1,8 +1,9 @@
-#include "../include/bl_image.h"
+#include "../../common/bootloader/bl_image.h"
 #include "../include/bl_jump.h"
-#include "../include/bl_config.h"
+#include "../include/bl_memmap.h"
 #include "../include/bl_hal.h"
 #include "../include/bl_crc32.h"
+#include "../../common/bootloader/bl_protocol.h"
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
@@ -101,7 +102,7 @@ static int bl_receive_and_program(void) {
 
 #ifdef BL_ENABLE_EXTFLASH_UPDATE
 #include "../include/bl_extflash_w25q32.h"
-#include "../../vg015/modules/update/update_flag.h"
+#include "../../common/shared/update_flag.h"
 
 #define BL_EXTU_ERR_SIZE_MISMATCH ((uint8_t)3u) /* вторые 2 LED: UF total_size mismatch */
 #define BL_EXTU_ERR_FLASH_IO      ((uint8_t)4u)
