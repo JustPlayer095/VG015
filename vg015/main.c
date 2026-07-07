@@ -43,11 +43,28 @@ void UART4_init()
     UART4->CR = UART_CR_TXE_Msk | UART_CR_RXE_Msk | UART_CR_UARTEN_Msk;
 }
 
+//-- OSDP RX ring buffer --------------------------------------------------------
+// Single-producer (uart4_irq_handler), single-consumer (main loop) byte queue.
+// Sized generously vs. realistic OSDP traffic at 115200 baud between two
+// drains of the main loop (every wfi wakeup); on overflow we drop the new
+// byte rather than block the ISR — a dropped byte fails frame CRC downstream
+// and the parser already recovers from that the same way it does today.
+#define OSDP_RX_BUF_SIZE 256u
+static volatile uint8_t g_osdp_rx_buf[OSDP_RX_BUF_SIZE];
+static volatile uint16_t g_osdp_rx_head = 0u;
+static volatile uint16_t g_osdp_rx_tail = 0u;
+
 static void uart4_irq_handler(void)
 {
     while (!RETARGET_UART->FR_bit.RXFE) {
         uint8_t ch = (uint8_t)RETARGET_UART->DR_bit.DATA;
-        osdp_on_rx_byte(ch);
+        uint16_t head = g_osdp_rx_head;
+        uint16_t next_head = (uint16_t)((head + 1u) % OSDP_RX_BUF_SIZE);
+        if (next_head != g_osdp_rx_tail) {
+            g_osdp_rx_buf[head] = ch;
+            g_osdp_rx_head = next_head;
+        }
+        /* else: buffer full, drop this byte */
     }
     RETARGET_UART->ICR = UART_ICR_RXIC_Msk |
                          UART_ICR_RTIC_Msk |
@@ -55,6 +72,19 @@ static void uart4_irq_handler(void)
                          UART_ICR_FEIC_Msk |
                          UART_ICR_PEIC_Msk |
                          UART_ICR_BEIC_Msk;
+}
+
+// Drains buffered bytes into the existing OSDP parser/dispatch/handler
+// pipeline. Must be called from mainline (not from an interrupt handler) —
+// that's the entire point: osdp_on_rx_byte() can now take as long as a
+// handler needs without blocking tmr32_irq_handler/gpio_irq_handler.
+static void osdp_rx_drain(void)
+{
+    while (g_osdp_rx_tail != g_osdp_rx_head) {
+        uint8_t ch = g_osdp_rx_buf[g_osdp_rx_tail];
+        g_osdp_rx_tail = (uint16_t)((g_osdp_rx_tail + 1u) % OSDP_RX_BUF_SIZE);
+        osdp_on_rx_byte(ch);
+    }
 }
 
 static void tmr32_irq_handler(void)
@@ -137,6 +167,7 @@ int main(void)
 {
   periph_init();
   while (1) {
+      osdp_rx_drain();
       __asm volatile("wfi");
   }
   return 0;
