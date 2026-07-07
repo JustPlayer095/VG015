@@ -219,15 +219,13 @@ void osdp_build_and_send_com(uint8_t seq, uint8_t new_addr, uint32_t new_baud)
 void osdp_build_and_send_istat(uint8_t seq)
 {
     uint8_t tx[16];
-    uint16_t i = osdp_build_header(tx, (uint16_t)(OSDP_HEADER_LEN + 1u), seq);
-    uint8_t inputs = 0;
+    uint16_t i = osdp_build_header(tx, (uint16_t)(OSDP_HEADER_LEN + 4u), seq);
+    uint8_t n;
 
     tx[i++] = osdp_ISTATR;
-    inputs |= (osdp_port_read_input(0u) ? 0u : 1u) << 0;
-    inputs |= (osdp_port_read_input(1u) ? 0u : 1u) << 1;
-    inputs |= (osdp_port_read_input(2u) ? 0u : 1u) << 2;
-    inputs |= (osdp_port_read_input(3u) ? 0u : 1u) << 3;
-    tx[i++] = inputs;
+    for (n = 0u; n < 4u; n++) {
+        tx[i++] = osdp_port_read_input(n) ? 0u : 1u;
+    }
 
     osdp_build_crc_and_send(tx, i);
 }
@@ -235,15 +233,13 @@ void osdp_build_and_send_istat(uint8_t seq)
 void osdp_build_and_send_ostat(uint8_t seq)
 {
     uint8_t tx[16];
-    uint16_t i = osdp_build_header(tx, (uint16_t)(OSDP_HEADER_LEN + 1u), seq);
-    uint8_t outputs = 0;
+    uint16_t i = osdp_build_header(tx, (uint16_t)(OSDP_HEADER_LEN + 4u), seq);
+    uint8_t n;
 
     tx[i++] = osdp_OSTATR;
-    outputs |= (osdp_port_read_output(0u) ? 1u : 0u) << 0;
-    outputs |= (osdp_port_read_output(1u) ? 1u : 0u) << 1;
-    outputs |= (osdp_port_read_output(2u) ? 1u : 0u) << 2;
-    outputs |= (osdp_port_read_output(3u) ? 1u : 0u) << 3;
-    tx[i++] = outputs;
+    for (n = 0u; n < 4u; n++) {
+        tx[i++] = osdp_port_read_output(n) ? 1u : 0u;
+    }
 
     osdp_build_crc_and_send(tx, i);
 }
@@ -881,6 +877,7 @@ void osdp_runtime_init(void)
     osdp_port_set_uart_baud(g_runtime_ctx.baud);
     osdp_port_extflash_init();
     osdp_port_outputs_init();      /* выходы OSDP на PA12-15 */
+    osdp_port_inputs_init();       /* входы OSDP на PA0-3, pull-up */
     update_flag_led_init();
     update_flag_led_set(osdp_port_update_flag_is_pending());
 

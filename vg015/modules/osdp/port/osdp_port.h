@@ -16,6 +16,7 @@ bool osdp_port_read_input(uint8_t idx);
 bool osdp_port_read_output(uint8_t idx);
 void osdp_port_set_output(uint8_t idx, bool on);
 void osdp_port_outputs_init(void);  /* включить выходы OSDP (PA12-15) */
+void osdp_port_inputs_init(void);   /* включить входы OSDP (PA0-3), pull-up */
 bool osdp_port_extflash_erase_range_4k(uint32_t base, uint32_t size);
 bool osdp_port_extflash_write(uint32_t addr, const uint8_t *data, uint16_t len);
 bool osdp_port_extflash_read(uint32_t addr, uint8_t *data, uint16_t len);

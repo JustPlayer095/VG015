@@ -17,7 +17,7 @@
  * CHGPINMOD; volatile — не хранится, дефолт CHAR):
  *  WHOLE (one_key=0) — цифры копятся в буфер, по '#' уходит весь PIN одним кадром;
  *  CHAR  (one_key=1) — каждая клавиша (вкл. '*' и '#') уходит немедленно. */
-static uint8_t g_pin_one_key = 1u;
+static uint8_t g_pin_one_key = 0u;
 
 typedef struct {
     GPIO_TypeDef *port;

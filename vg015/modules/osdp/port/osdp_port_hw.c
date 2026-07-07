@@ -85,7 +85,17 @@ bool osdp_port_read_input(uint8_t idx)
     if (idx >= 4u) return false;
     return GPIO_ReadBit(GPIOA, pins[idx]) ? true : false;
 }
+#define OSDP_IN_MASK  ((uint32_t)0x000Fu)  /* PA0-3 */
 #define OSDP_OUT_MASK ((uint32_t)0xF000u)  /* PA12-15 */
+
+void osdp_port_inputs_init(void)
+{
+    RCU->CGCFGAHB_bit.GPIOAEN = 1;
+    RCU->RSTDISAHB_bit.GPIOAEN = 1;
+    GPIOA->ALTFUNCCLR = OSDP_IN_MASK;
+    GPIOA->OUTENCLR   = OSDP_IN_MASK;   /* вход */
+    GPIOA->PULLMODE  |= OSDP_IN_MASK;   /* подтяжка вверх, чтоб не плавали */
+}
 
 bool osdp_port_read_output(uint8_t idx)
 {
